@@ -1,6 +1,6 @@
 import { utils } from 'ethers'
-import { round, randInt, validator } from './helpers';
-import { getRandomNonce, getOrderHash } from './crypto';
+import { round, randInt, validator } from '../utils/helpers';
+import { getRandomNonce, getOrderHash } from '../utils/crypto';
 
 
 export class Orders {

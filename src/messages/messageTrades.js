@@ -1,4 +1,4 @@
-import { validator } from './helpers';
+import { validator } from '../utils/helpers';
 
 
 export class Trades {

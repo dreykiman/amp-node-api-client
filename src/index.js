@@ -1,5 +1,5 @@
-import { Trades } from './lib/messageTrades'
-import { Orders} from './lib/messageOrders'
+import { Trades } from './messages/messageTrades'
+import { Orders} from './messages/messageOrders'
 
 export const ampMessages = {
   Orders: Orders,
