@@ -31,7 +31,7 @@ ws.onmessage = (ev) => {
 
 ```
 
-For write permissions you'll need to sign the message using the signer of your choice:
+For writing you'll need to sign the message using the signer of your choice:
 
 ```javascript
 import { ampMessages } from 'pathto/amp-node-api-client'
