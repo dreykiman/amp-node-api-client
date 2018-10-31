@@ -1,6 +1,6 @@
 import { utils } from 'ethers'
 import { round, randInt, validator } from '../utils/helpers';
-import { getRandomNonce, getOrderHash } from '../utils/crypto';
+import { getRandomNonce, getOrderHash, getOrderCancelHash } from '../utils/crypto';
 
 
 export class Orders {
@@ -64,6 +64,28 @@ export class Orders {
         "type": "NEW_ORDER",
         "hash": order.hash,
         "payload": order
+      }
+    }
+  }
+
+
+  async cancel_order(orderHash) {
+    let hash = getOrderCancelHash(orderHash)
+
+    let signature = await this.signer.signMessage(utils.arrayify(hash))
+    let { r, s, v } = utils.splitSignature(signature)
+    signature = { R: r, S: s, V: v }
+
+    return {
+      "channel": "orders",
+      "event": {
+        "type": "CANCEL_ORDER",
+        "hash": hash,
+        "payload": {
+          "hash": hash,
+          "orderHash": orderHash,
+          "signature": signature
+        }
       }
     }
   }
