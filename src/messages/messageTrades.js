@@ -1,12 +1,11 @@
 import { validator } from '../utils/helpers';
 
-
-export class Trades {
+export default class Trades {
   constructor() {
     return new Proxy(this, validator);
   }
 
-  async subscribe() {
+  subscribe() {
     return {
       "channel": "trades",
       "event": {
@@ -20,7 +19,7 @@ export class Trades {
     }
   }
 
-  async unsubscribe() {
+  unsubscribe() {
     return {
       "channel": "trades",
       "event": {

@@ -12,7 +12,11 @@
   "license": "ISC",
   "dependencies": {
     "babel-core": "^6.26.3",
-    "ethers": "^4.0.7"
+    "ethers": "^4.0.7",
+    "fs": "0.0.1-security",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "ws": "^6.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

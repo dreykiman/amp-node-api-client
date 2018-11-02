@@ -1,12 +1,12 @@
 import { validator } from '../utils/helpers';
 
 
-export class Orderbook {
+export default class Orderbook {
   constructor() {
     return new Proxy(this, validator);
   }
 
-  async subscribe() {
+  subscribe() {
     return {
       "channel": "orderbook",
       "event": {
@@ -20,7 +20,7 @@ export class Orderbook {
     }
   }
 
-  async unsubscribe() {
+  unsubscribe() {
     return {
       "channel": "orderbook",
       "event": {

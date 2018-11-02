@@ -1,12 +1,11 @@
 import { validator } from '../utils/helpers';
 
-
-export class RawOrderbook {
+export default class RawOrderbook {
   constructor() {
     return new Proxy(this, validator);
   }
 
-  async subscribe() {
+  subscribe() {
     return {
       "channel": "raw_orderbook",
       "event": {
@@ -20,7 +19,7 @@ export class RawOrderbook {
     }
   }
 
-  async unsubscribe() {
+  unsubscribe() {
     return {
       "channel": "raw_orderbook",
       "event": {
