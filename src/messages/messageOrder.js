@@ -2,9 +2,12 @@ import { utils } from 'ethers'
 import { round, randInt, validator } from '../utils/helpers';
 import { getRandomNonce, getOrderHash, getOrderCancelHash } from '../utils/crypto';
 
-class Order {
-  constructor() {
-    return new Proxy(this, validator)
+
+
+class msgOrder {
+  constructor(ord) {
+    this.ord = Object.assign( {}, ord )
+    this.ord = new Proxy( this.ord, validator )
   }
 
   async sign(signer) {
@@ -22,8 +25,8 @@ class Order {
     let pricePrecisionMultiplier = 1e6
     let amountMultiplier = utils.bigNumberify('1000000000000000000') //1e18
     let priceMultiplier = utils.bigNumberify('1000000') //1e6
-    let amount = round(this.amount * amountPrecisionMultiplier, 0)
-    let price = round(this.price * pricePrecisionMultiplier, 0)
+    let amount = round(this.ord.amount * amountPrecisionMultiplier, 0)
+    let price = round(this.ord.price * pricePrecisionMultiplier, 0)
   
     let amountPoints = utils
       .bigNumberify(amount)
@@ -34,20 +37,20 @@ class Order {
       .mul(priceMultiplier)
       .div(utils.bigNumberify(pricePrecisionMultiplier))
   
-    order.userAddress = this.userAddress
-    order.exchangeAddress = this.exchangeAddress
-    order.buyToken = this.side === 'BUY' ? this.baseTokenAddress : this.quoteTokenAddress
-    order.buyAmount = this.side === 'BUY'
+    order.userAddress = this.ord.userAddress
+    order.exchangeAddress = this.ord.exchangeAddress
+    order.buyToken = this.ord.side === 'BUY' ? this.ord.baseTokenAddress : this.ord.quoteTokenAddress
+    order.buyAmount = this.ord.side === 'BUY'
       ? amountPoints.toString()
       : amountPoints.mul(pricePoints).div(priceMultiplier).toString()
   
-    order.sellToken = this.side === 'BUY' ? this.quoteTokenAddress : this.baseTokenAddress
-    order.sellAmount = this.side === 'BUY'
+    order.sellToken = this.ord.side === 'BUY' ? this.ord.quoteTokenAddress : this.ord.baseTokenAddress
+    order.sellAmount = this.ord.side === 'BUY'
       ? amountPoints.mul(pricePoints).div(priceMultiplier).toString()
       : amountPoints.toString()
   
-    order.makeFee = this.makeFee
-    order.takeFee = this.takeFee
+    order.makeFee = this.ord.makeFee.toString()
+    order.takeFee = this.ord.takeFee.toString()
     order.nonce = getRandomNonce()
     order.expires = '10000000000000'
     order.hash = getOrderHash(order)
@@ -67,33 +70,33 @@ class Order {
   }
 }
 
+class msgOrderCancellation {
+  constructor(orderHash) {
+    this.orderHash = orderHash
+  }
 
-export const new_order = _ => new Order()
+  async sign(signer) {
+    let hash = getOrderCancelHash(this.orderHash)
 
-
-export const cancel_order = orderHash => {
-  return {
-    orderHash: orderHash,
+    let signature = await signer.signMessage(utils.arrayify(hash))
+    let { r, s, v } = utils.splitSignature(signature)
+    signature = { R: r, S: s, V: v }
   
-    sign: async (signer) => {
-      let hash = getOrderCancelHash(orderHash)
-  
-      let signature = await signer.signMessage(utils.arrayify(hash))
-      let { r, s, v } = utils.splitSignature(signature)
-      signature = { R: r, S: s, V: v }
-  
-      return {
-        "channel": "orders",
-        "event": {
-          "type": "CANCEL_ORDER",
+    return {
+      "channel": "orders",
+      "event": {
+        "type": "CANCEL_ORDER",
+        "hash": hash,
+        "payload": {
           "hash": hash,
-          "payload": {
-            "hash": hash,
-            "orderHash": orderHash,
-            "signature": signature
-          }
+          "orderHash": this.orderHash,
+          "signature": signature
         }
       }
     }
   }
 }
+
+export const new_order = ord => new msgOrder(ord)
+export const cancel_order = hash => new msgOrderCancellation(hash)
+

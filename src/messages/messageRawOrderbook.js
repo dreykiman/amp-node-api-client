@@ -1,6 +1,6 @@
 import { validator } from '../utils/helpers';
 
-export default class RawOrderbook {
+export default class msgRawOrderbook {
   constructor() {
     return new Proxy(this, validator);
   }

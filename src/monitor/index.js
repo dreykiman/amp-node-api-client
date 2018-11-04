@@ -1,2 +1,0 @@
-import deferred from './deferred'
-

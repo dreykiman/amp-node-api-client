@@ -1,26 +1,26 @@
 import { validator } from '../utils/helpers';
 
 
-export default class Orderbook {
-  constructor() {
-    return new Proxy(this, validator);
+export default class msgOrderbook {
+  constructor(ord) {
+    this.ord = new Proxy(Object.assign({}, ord), validator)
   }
 
-  subscribe() {
+  async subscribe() {
     return {
       "channel": "orderbook",
       "event": {
         "type": "SUBSCRIBE",
         "payload": {
-          "baseToken": this.baseToken,
-          "quoteToken": this.quoteToken,
-          "name": this.baseTokenSymbol+"/"+this.quoteTokenSymbol,
+          "baseToken": this.ord.baseToken,
+          "quoteToken": this.ord.quoteToken,
+          "name": this.ord.baseTokenSymbol+"/"+this.ord.quoteTokenSymbol,
         }
       }
     }
   }
 
-  unsubscribe() {
+  async unsubscribe() {
     return {
       "channel": "orderbook",
       "event": {

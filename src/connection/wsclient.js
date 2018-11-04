@@ -23,16 +23,24 @@ ws.onclose = () => {
 
 ws.onopen = (ev) => {
   console.log('Connection is open ...');
+  ws.send(JSON.stringify(
+    {
+      "channel": "orderbook",
+      "event": {
+        "type": "UNSUBSCRIBE",
+      }
+    }
+  ))
 }
 
-ws.reopen1 = _ => {
+ws.reopen = _ => {
   setTimeout( _ => {
     if( ws.readyState === ws.CLOSED ) {
       ws = new WebSocket("ws://13.125.100.61:8081/socket")
     } else if( ws.readyState === ws.CONNECTING || ws.readyState === ws.OPEN ){
       return
     } else {
-      ws.reopen1();
+      ws.reopen();
     }
   }, 500)
 }

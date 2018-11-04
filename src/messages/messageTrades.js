@@ -1,6 +1,6 @@
 import { validator } from '../utils/helpers';
 
-export default class Trades {
+export default class msgTrades {
   constructor() {
     return new Proxy(this, validator);
   }

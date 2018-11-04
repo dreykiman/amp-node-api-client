@@ -7,9 +7,9 @@ export const randInt = (min, max) => {
 
 export const validator = {
   get: function(target, name) {
-    if (target[name] === undefined) {
+    if (target[name] == null) {
         console.log("======== "+name+' is not in '+target);
-        throw new Error("undefined property in message");
+        throw new Error(name+" is not defined")
     }
 
 /* else if (typeof target[name] === 'object') {
