@@ -7,14 +7,14 @@ export const getOrderHash = order => {
     [
       order.exchangeAddress,
       order.userAddress,
-      order.sellToken,
-      order.buyToken,
-      order.sellAmount,
-      order.buyAmount,
+      order.baseToken,
+      order.quoteToken,
+      order.amount,
+      order.pricepoint,
+      order.side === 'BUY' ? '0' : '1',
+      order.nonce,
       order.makeFee,
-      order.takeFee,
-      order.expires,
-      order.nonce
+      order.takeFee
     ]
   )
 }

@@ -37,22 +37,16 @@ class msgOrder {
       .mul(priceMultiplier)
       .div(utils.bigNumberify(pricePrecisionMultiplier))
   
-    order.userAddress = this.ord.userAddress
     order.exchangeAddress = this.ord.exchangeAddress
-    order.buyToken = this.ord.side === 'BUY' ? this.ord.baseTokenAddress : this.ord.quoteTokenAddress
-    order.buyAmount = this.ord.side === 'BUY'
-      ? amountPoints.toString()
-      : amountPoints.mul(pricePoints).div(priceMultiplier).toString()
-  
-    order.sellToken = this.ord.side === 'BUY' ? this.ord.quoteTokenAddress : this.ord.baseTokenAddress
-    order.sellAmount = this.ord.side === 'BUY'
-      ? amountPoints.mul(pricePoints).div(priceMultiplier).toString()
-      : amountPoints.toString()
-  
+    order.userAddress = this.ord.userAddress
+    order.baseToken = this.ord.baseTokenAddress
+    order.quoteToken = this.ord.quoteTokenAddress
+    order.amount = amountPoints.toString()
+    order.pricepoint = pricePoints.toString()
+    order.side = this.ord.side
     order.makeFee = this.ord.makeFee.toString()
     order.takeFee = this.ord.takeFee.toString()
     order.nonce = getRandomNonce()
-    order.expires = '10000000000000'
     order.hash = getOrderHash(order)
 
     let signature = await signer.signMessage(utils.arrayify(order.hash))

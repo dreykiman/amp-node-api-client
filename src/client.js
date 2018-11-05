@@ -23,6 +23,7 @@ export default class {
     return msgOrder.new_order(order).sign(this.wallet)
       .then( this.submit )
       .then( msg => {
+
         let order = Object.assign(orderbook[msg.event.hash], msg.event.payload)
         order.added = new deferred(10000)
         return order.added.promise
@@ -51,10 +52,9 @@ export default class {
     return rp("http://13.125.100.61:8081/orders?address="+this.wallet.address, {json: true})
              .catch("couldn't access AMP REST API")
   }
-
   pairs() {
     return rp("http://13.125.100.61:8081/pairs", {json: true})
-             .then( data => { return data.data.filter(ele => ele.quoteTokenAddress == "0xe9b5da78abb9fda785f828836f5c7e7f20273779" ) } )
+             .then( data => { return data.data.filter(ele => ele.quoteTokenAddress == "0xa3f9eacdb960d33845a4b004974feb805e05c4a9" ) } )
              .catch("couldn't access AMP REST API")
   }
 }
@@ -63,22 +63,26 @@ export default class {
 
 
 wsclient.onmessage = (ev) => {
+  let data;
   try {  
-    let data = JSON.parse(ev.data)
-    if (data.event) {
-      if (data.event.type === "ORDER_CANCELLED") {
-        orderbook[data.event.hash].cancelled.resolve(data)
-      } else if (data.event.type === "ORDER_ADDED") {
-        let prm = orderbook[data.event.hash].added
-        prm && prm.resolve && prm.resolve(data)
-      } else {
-        console.log(data)
-      }
-    } else {
-      console.log(data)
-    }
+    data = JSON.parse(ev.data)
   } catch (ev) {
     console.log("return value is not valid JSON")
+    throw new Error("return value is not valid JSON")
   }
+
+  if (data.event) {
+    if (data.event.type === "ORDER_CANCELLED") {
+      orderbook[data.event.hash].cancelled.resolve(data)
+    } else if (data.event.type === "ORDER_ADDED") {
+      let prm = orderbook[data.event.hash].added
+      prm && prm.resolve && prm.resolve(data)
+    } else {
+//      console.log(data)
+    }
+  } else {
+//    console.log(data)
+  }
+  console.log(data)
 }
 
