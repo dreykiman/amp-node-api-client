@@ -25,7 +25,7 @@ export default class {
       .then( msg => {
 
         let order = Object.assign(orderbook[msg.event.hash], msg.event.payload)
-        order.added = new deferred(10000)
+        order.added = new deferred(20000)
         return order.added.promise
       })
       .catch( msg => { return { error: msg.toString() }})
@@ -49,11 +49,12 @@ export default class {
 
 
   my_orders() {
-    return rp("http://13.125.100.61:8081/orders?address="+this.wallet.address, {json: true})
+    return rp("http://ampapi:8081/orders?address="+this.wallet.address, {json: true})
              .catch("couldn't access AMP REST API")
   }
+
   pairs() {
-    return rp("http://13.125.100.61:8081/pairs", {json: true})
+    return rp("http://ampapi:8081/pairs", {json: true})
              .then( data => { return data.data.filter(ele => ele.quoteTokenAddress == "0xa3f9eacdb960d33845a4b004974feb805e05c4a9" ) } )
              .catch("couldn't access AMP REST API")
   }
