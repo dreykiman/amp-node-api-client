@@ -74,12 +74,14 @@ wsclient.onmessage = (ev) => {
 
   if (data.event) {
     if (data.event.type === "ORDER_CANCELLED") {
+      let pload = data.event.payload
+      if (pload) console.log(`${pload.status} ${pload.pairName} ${pload.pricepoint} ${pload.side}`)
+
       let prm = orderbook[data.event.hash].cancelled
       if (prm) prm.resolve(data)
-      console.log(data)
     } else if (data.event.type === "ORDER_ADDED") {
-      let payload = data.event.payload
-      if (payload) console.log(`added: ${payload.pairName} ${payload.pricepoint} ${payload.side}`)
+      let pload = data.event.payload
+      if (pload) console.log(`${pload.status} ${pload.pairName} ${pload.pricepoint} ${pload.side}`)
 
       let prm = orderbook[data.event.hash].added
       if (prm && prm.resolve) prm.resolve(data)
