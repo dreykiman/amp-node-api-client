@@ -1,7 +1,7 @@
 import rp from 'request-promise-native'
 import * as msgOrder from './messages/messageOrder'
 import wsclient from './connection/wsclient'
-import orderbook from './storage/orderbook'
+import orderbook from './market/orderbook'
 import deferred from './utils/deferred'
 
 
@@ -74,16 +74,20 @@ wsclient.onmessage = (ev) => {
 
   if (data.event) {
     if (data.event.type === "ORDER_CANCELLED") {
-      orderbook[data.event.hash].cancelled.resolve(data)
+      let prm = orderbook[data.event.hash].cancelled
+      if (prm) prm.resolve(data)
+      console.log(data)
     } else if (data.event.type === "ORDER_ADDED") {
+      let payload = data.event.payload
+      if (payload) console.log(`added: ${payload.pairName} ${payload.pricepoint} ${payload.side}`)
+
       let prm = orderbook[data.event.hash].added
-      prm && prm.resolve && prm.resolve(data)
+      if (prm && prm.resolve) prm.resolve(data)
     } else {
-//      console.log(data)
+      console.log(data)
     }
   } else {
-//    console.log(data)
+    console.log(data)
   }
-  console.log(data)
 }
 
