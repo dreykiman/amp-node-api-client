@@ -2,7 +2,8 @@ import cache from 'memory-cache'
 
 const accessor = {
   get: function(target, name) {
-    if (name === undefined || name === null) {
+    // Proxy converts undefined/null keys to strings
+    if (name === "undefined" || name === "null") {
       console.log("invalid orderbook key: null or undefined")
       throw new Error("invalid orderbook key: null or undefined")
     }
