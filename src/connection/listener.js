@@ -1,8 +1,8 @@
-import wsclient from './wsclient'
 import orderbook from '../market/orderbook'
 import deferred from '../utils/deferred'
 
-wsclient.onmessage = (ev) => {
+
+export default ev => {
   let data;
   try {  
     data = JSON.parse(ev.data)
@@ -11,19 +11,31 @@ wsclient.onmessage = (ev) => {
     throw new Error('return value is not valid JSON')
   }
 
-  if (data.event) {
+  if (data.event && data.channel) {
     if (data.event.type === 'ORDER_CANCELLED') {
-      let pload = data.event.payload
-      if (pload) console.log(`${pload.status} ${pload.pairName} ${pload.pricepoint} ${pload.side} ${pload.baseToken}`)
+      let pld = data.event.payload
+      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
 
-      let prm = orderbook[data.event.hash].cancelled
+      let prm = orderbook[pld.hash].cancelled
       if (prm) prm.resolve(data)
-    } else if (data.event.type === 'ORDER_ADDED') {
-      let pload = data.event.payload
-      if (pload) console.log(`${pload.status} ${pload.pairName} ${pload.pricepoint} ${pload.side} ${pload.baseToken}`)
 
-      let prm = orderbook[data.event.hash].added
+    } else if (data.event.type === 'ORDER_ADDED') {
+      let pld = data.event.payload
+      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
+
+      let prm = orderbook[pld.hash].added
       if (prm && prm.resolve) prm.resolve(data)
+
+    } else if (data.channel === 'raw_orderbook') {
+      let pld = data.event.payload
+      if (pld) {
+        pld.forEach( ord => Object.assign(orderbook[ord.hash], ord) )
+
+        if (pld.added) pld.added.resolve(data)
+        if (pld.cancelled) pld.cancelled.resolve(data)
+      }
+      else console.log(data)
+
     } else {
       console.log(data)
     }
@@ -31,5 +43,4 @@ wsclient.onmessage = (ev) => {
     console.log(data)
   }
 }
-
 
