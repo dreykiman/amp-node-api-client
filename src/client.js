@@ -34,10 +34,11 @@ export default class {
       .then( this.submit )
       .then( msg => {
         let order = Object.assign(orderbook[msg.event.hash], msg.event.payload)
-        order.added = new deferred(20000)
+        order.added = new deferred(40000)
         return order.added.promise
+      }).catch( msg => {
+        throw new Error((msg.toString(), JSON.stringify(order)).join('\n'))
       })
-//      .catch( msg => { return { error: msg.toString() }})
   }
 
 
@@ -47,13 +48,14 @@ export default class {
       .then( msg => {
         let order = orderbook[hash]
         if (order.status == null || ( order.status!='CANCELLED' && order.status!='FILLED') ){
-          order.cancelled = new deferred(15000)
+          order.cancelled = new deferred(35000)
         } else {
           order.cancelled = Promise.resolve()
         }
         return order.cancelled.promise
+      }).catch( msg => {
+        throw new Error((msg.toString(), hash, JSON.stringify(orderbook[hash])).join('\n'))
       })
-//      .catch( msg => {return { error: msg.toString() }} )
   }
 
 
