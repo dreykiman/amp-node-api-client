@@ -29,10 +29,11 @@ export default ev => {
     } else if (data.channel === 'raw_orderbook') {
       let pld = data.event.payload
       if (pld) {
-        pld.forEach( ord => Object.assign(orderbook[ord.hash], ord) )
-
-        if (pld.added) pld.added.resolve(data)
-        if (pld.cancelled) pld.cancelled.resolve(data)
+        pld.forEach( ord => {
+          ord = Object.assign(orderbook[ord.hash], ord) 
+          if (ord.added) ord.added.resolve(data)
+          if (ord.cancelled) ord.cancelled.resolve(data)
+        })
       }
       else console.log(data)
 
