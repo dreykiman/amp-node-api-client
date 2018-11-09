@@ -31,8 +31,14 @@ export default ev => {
       if (pld) {
         pld.forEach( ord => {
           ord = Object.assign(orderbook[ord.hash], ord) 
-          if (ord.added) ord.added.resolve(ord)
-          if (ord.cancelled) ord.cancelled.resolve(ord)
+          if (ord.added) {
+            console.log(`from raw: ${ord.status} ${ord.pairName} ${ord.pricepoint} ${ord.side} ${ord.baseToken}`)
+            ord.added.resolve({event: {payload: ord}})
+          }
+          if (ord.cancelled) {
+            console.log(`from raw: ${ord.status} ${ord.pairName} ${ord.pricepoint} ${ord.side} ${ord.baseToken}`)
+            ord.cancelled.resolve({event: {payload: ord}})
+          }
         })
       }
       else console.log(data)
