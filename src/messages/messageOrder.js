@@ -1,6 +1,6 @@
 import { utils } from 'ethers'
-import { round, randInt, validator } from '../utils/helpers';
-import { getRandomNonce, getOrderHash, getOrderCancelHash } from '../utils/crypto';
+import { round, randInt, validator } from '../utils/helpers'
+import { getRandomNonce, getOrderHash, getOrderCancelHash } from '../utils/crypto'
 
 
 
@@ -11,7 +11,7 @@ class msgOrder {
   }
 
   async sign(signer) {
-    let order = {};
+    let order = {}
 
     // The amountPrecisionMultiplier and pricePrecisionMultiplier are temporary multipliers
     // that are used to turn decimal values into rounded integers that can be converted into

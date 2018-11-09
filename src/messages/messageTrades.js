@@ -1,8 +1,8 @@
-import { validator } from '../utils/helpers';
+import { validator } from '../utils/helpers'
 
 export default class msgTrades {
   constructor() {
-    return new Proxy(this, validator);
+    return new Proxy(this, validator)
   }
 
   subscribe() {

@@ -1,4 +1,4 @@
-import { validator } from '../utils/helpers';
+import { validator } from '../utils/helpers'
 
 
 export default {

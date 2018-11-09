@@ -8,7 +8,7 @@ export const randInt = (min, max) => {
 export const validator = {
   get: function(target, name) {
     if (target[name] == null) {
-        console.log("======== "+name+' is not in '+target);
+        console.log("======== "+name+' is not in '+target)
         throw new Error(name+" is not defined")
     }
 
@@ -20,7 +20,7 @@ export const validator = {
     }
 */
 
-    return target[name];
+    return target[name]
   }
 }
 

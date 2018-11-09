@@ -3,7 +3,7 @@ import deferred from '../utils/deferred'
 
 
 export default ev => {
-  let data;
+  let data
   try {  
     data = JSON.parse(ev.data)
   } catch (ev) {
