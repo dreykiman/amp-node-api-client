@@ -37,7 +37,7 @@ export default class {
         order.added = new deferred(40000)
         return order.added.promise
       }).catch( msg => {
-        throw {err: 'new order failed', msg: msg, order: order}
+        throw {err: 'new order failed', msg: msg, order: order, time: Date.now()}
       })
   }
 
@@ -54,7 +54,7 @@ export default class {
         }
         return order.cancelled.promise
       }).catch( msg => {
-        throw {err: 'cancel order failed', msg: msg, hash: hash, order: orderbook[hash]}
+        throw {err: 'cancel order failed', msg: msg, hash: hash, order: orderbook[hash], time: Date.now()}
       })
   }
 
