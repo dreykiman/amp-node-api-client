@@ -14,14 +14,14 @@ export default ev => {
   if (data.event && data.channel) {
     if (data.event.type === 'ORDER_CANCELLED') {
       let pld = data.event.payload
-      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
+//      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
 
       let prm = orderbook[pld.hash].cancelled
       if (prm) prm.resolve(data)
 
     } else if (data.event.type === 'ORDER_ADDED') {
       let pld = data.event.payload
-      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
+//      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
 
       let prm = orderbook[pld.hash].added
       if (prm && prm.resolve) prm.resolve(data)
@@ -32,11 +32,11 @@ export default ev => {
         pld.forEach( ord => {
           ord = Object.assign(orderbook[ord.hash], ord) 
           if (ord.added) {
-            console.log(`from raw: ${ord.status} ${ord.pairName} ${ord.pricepoint} ${ord.side} ${ord.baseToken}`)
+//            console.log(`from raw: ${ord.status} ${ord.pairName} ${ord.pricepoint} ${ord.side} ${ord.baseToken}`)
             ord.added.resolve({event: {payload: ord}})
           }
           if (ord.cancelled) {
-            console.log(`from raw: ${ord.status} ${ord.pairName} ${ord.pricepoint} ${ord.side} ${ord.baseToken}`)
+//            console.log(`from raw: ${ord.status} ${ord.pairName} ${ord.pricepoint} ${ord.side} ${ord.baseToken}`)
             ord.cancelled.resolve({event: {payload: ord}})
           }
         })
