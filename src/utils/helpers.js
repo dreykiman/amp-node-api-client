@@ -9,7 +9,7 @@ export const validator = {
   get: function(target, name) {
     if (target[name] == null) {
         console.log("======== "+name+' is not in '+target)
-        throw new Error(name+" is not defined")
+        throw {err: `${name} is not defined`}
     }
 
 /* else if (typeof target[name] === 'object') {

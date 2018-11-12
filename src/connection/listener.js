@@ -8,7 +8,7 @@ export default ev => {
     data = JSON.parse(ev.data)
   } catch (ev) {
     console.log('return value is not valid JSON')
-    throw new Error('return value is not valid JSON')
+    throw {err: 'return value is not valid JSON'}
   }
 
   if (data.event && data.channel) {
