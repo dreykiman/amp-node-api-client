@@ -7,7 +7,7 @@ export default class {
 
     if (timeOut != null) {
       setTimeout( _=> {
-        this.reject(new {err: "rejected due to expiration timer"})
+        this.reject( {err: "rejected due to expiration timer"} )
       }, timeOut )
     }
   }
