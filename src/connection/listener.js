@@ -1,5 +1,4 @@
-import orderbook from '../market/orderbook'
-import deferred from '../utils/deferred'
+import orderbook, {subscriptions} from '../market/orderbook'
 
 
 export default ev => {
@@ -27,7 +26,14 @@ export default ev => {
       if (prm && prm.resolve) prm.resolve(data)
 
     } else if (data.channel === 'raw_orderbook') {
-      let pld = (data.event.type === 'INIT') ? data.event.payload.orders : data.event.payload
+      let pld = data.event.payload
+
+      if (pld && data.event.type === 'INIT') {
+        let pairName = pld.pairName
+        pld = pld.orders
+        if (subscriptions[pairName] && subscriptions[pairName].resolve) subscriptions[pairName].resolve()
+      }
+
       if (pld) {
         pld.forEach( ord => {
           ord = Object.assign(orderbook[ord.hash], ord) 
@@ -41,13 +47,12 @@ export default ev => {
           }
         })
       }
-      else console.log(data)
-
     } else {
       console.log(data)
     }
   } else {
     console.log(data)
   }
+//  console.log(ev.data)
 }
 

@@ -2,7 +2,7 @@ import rp from 'request-promise-native'
 import * as msgOrder from './messages/messageOrder'
 import msgRawOrderbook from './messages/messageRawOrderbook'
 import wsclient from './connection/wsclient'
-import orderbook from './market/orderbook'
+import orderbook, {subscriptions} from './market/orderbook'
 import pairs, {updatePairs} from './market/pairs'
 import deferred from './utils/deferred'
 import { utils } from 'ethers'
@@ -76,7 +76,12 @@ export default class {
       baseToken: baseAddr,
       quoteToken: quoteAddr
     }
+    let pair = pairs().find(ele => ele.baseTokenAddress === baseAddr && ele.quoteTokenAddress === quoteAddr)
+    let pairName = `${pair.baseTokenSymbol}/${pair.quoteTokenSymbol}`
+    subscriptions[pairName] = new deferred(20000)
     this.submit(msgRawOrderbook.subscribe(ord))
+
+    return subscriptions[pairName]
   }
 }
 

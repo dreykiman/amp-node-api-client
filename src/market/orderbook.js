@@ -21,5 +21,7 @@ if (!cache.get("orderbook")) {
 }
 
 let orderbook = cache.get("orderbook")
+let subscriptions = {}
 
 export default orderbook
+export { subscriptions }
