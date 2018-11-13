@@ -27,7 +27,7 @@ export default ev => {
       if (prm && prm.resolve) prm.resolve(data)
 
     } else if (data.channel === 'raw_orderbook') {
-      let pld = data.event.payload
+      let pld = (data.event.type === 'INIT') ? data.event.payload.orders : data.event.payload
       if (pld) {
         pld.forEach( ord => {
           ord = Object.assign(orderbook[ord.hash], ord) 

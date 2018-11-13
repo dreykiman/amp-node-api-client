@@ -22,9 +22,9 @@ class msgOrder {
     // amountPoints ~ amount * amountMultiplier ~ amount * 1e18
     // pricePoints ~ price * priceMultiplier ~ price * 1e6
     let amountPrecisionMultiplier = 1e6
-    let pricePrecisionMultiplier = 1e6
+    let pricePrecisionMultiplier = 1e9
     let amountMultiplier = utils.bigNumberify('1000000000000000000') //1e18
-    let priceMultiplier = utils.bigNumberify('1000000') //1e6
+    let priceMultiplier = utils.bigNumberify('1000000000') //1e9
     let amount = round(this.ord.amount * amountPrecisionMultiplier, 0)
     let price = round(this.ord.price * pricePrecisionMultiplier, 0)
   
