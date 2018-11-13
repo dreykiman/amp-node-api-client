@@ -60,7 +60,7 @@ export default class {
 
 
   my_orders() {
-    return Object.values(orderbook).filter(ord => utils.getAddress(ord.userAddress) === this.wallet.address)
+    return Object.values(orderbook).filter(ord => ord && ord.userAddress && utils.getAddress(ord.userAddress) === this.wallet.address)
 //    return rp('http://ampapi:8081/orders?address='+this.wallet.address, {json: true})
 //             .catch('couldn\'t access AMP REST API')
   }
