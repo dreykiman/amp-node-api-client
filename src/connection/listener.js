@@ -11,6 +11,7 @@ export default ev => {
   }
 
   if (data.event && data.channel) {
+//console.log(ev.data)
     if (data.event.type === 'ORDER_CANCELLED') {
       let pld = data.event.payload
 //      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
@@ -47,12 +48,22 @@ export default ev => {
           }
         })
       }
+    } else if (data.event.type === 'ERROR') {
+      if (data.event.payload.includes && data.event.payload.includes("No order with this hash present")){
+        let hash = data.event.payload.split(":").slice(1)
+        let ord = orderbook[hash]
+        if (ord.cancelled && ord.cancelled.resolve) 
+          ord.cancelled.resolve({event: {payload: ord}})
+        if (ord.added && ord.cancelled.resolve) 
+          ord.added.resolve({event: {payload: ord}})
+      } else {
+        console.log(JSON.stringify(orderbook))
+      }
     } else {
       console.log(data)
     }
   } else {
     console.log(data)
   }
-//  console.log(ev.data)
 }
 
