@@ -56,8 +56,6 @@ export default ev => {
           ord.cancelled.resolve({event: {payload: ord}})
         if (ord.added && ord.cancelled.resolve) 
           ord.added.resolve({event: {payload: ord}})
-      } else {
-        console.log(JSON.stringify(orderbook))
       }
     } else {
       console.log(data)
