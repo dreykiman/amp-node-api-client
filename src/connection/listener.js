@@ -57,6 +57,7 @@ export default ev => {
         if (ord.added && ord.cancelled.resolve) 
           ord.added.resolve({event: {payload: ord}})
       }
+      console.log(data)
     } else {
       console.log(data)
     }
