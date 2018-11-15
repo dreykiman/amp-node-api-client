@@ -81,7 +81,7 @@ export default class {
     subscriptions[pairName] = new deferred(20000)
     this.submit(msgRawOrderbook.subscribe(ord))
 
-    return subscriptions[pairName]
+    return subscriptions[pairName].promise
   }
 }
 
