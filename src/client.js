@@ -11,6 +11,7 @@ import { utils } from 'ethers'
 export default class {
   constructor(wallet) {
     this.wallet = wallet
+    this.ws = wsclient
   }
 
 
@@ -24,20 +25,25 @@ export default class {
 
 
   submit( msg ) {
+    if (!wsclient.isAlive)
+      throw {error: "websocket connections is closed"}
     wsclient.send(JSON.stringify(msg))
     return msg
   }
 
 
   new_order(order) {
+    order.userAddress = this.wallet.address
+
     return msgOrder.new_order(order).sign(this.wallet)
       .then( this.submit )
       .then( msg => {
-        let order = Object.assign(orderbook[msg.event.hash], msg.event.payload)
+        let {payload, hash} = msg.event
+        let order = Object.assign(orderbook[hash], payload)
         order.added = new deferred(40000)
         return order.added.promise
       }).catch( msg => {
-        throw {err: 'new order failed', msg: msg, order: order, time: Date.now()}
+        throw {err: 'new order failed', msg, order, time: Date.now()}
       })
   }
 
@@ -54,17 +60,16 @@ export default class {
         }
         return order.cancelled.promise
       }).catch( msg => {
-        throw {err: 'cancel order failed', msg: msg, hash: hash, order: orderbook[hash], time: Date.now()}
+        throw {err: 'cancel order failed', msg, hash, order: orderbook[hash], time: Date.now()}
       })
   }
 
+  my_orders(pair) {
+    let myords = Object.values(orderbook)
+      .filter(ord => ord.userAddress && utils.getAddress(ord.userAddress) === this.wallet.address)
 
-  my_orders() {
-    return Object.values(orderbook).filter(ord => ord && ord.userAddress && utils.getAddress(ord.userAddress) === this.wallet.address)
-//    return rp('http://ampapi:8081/orders?address='+this.wallet.address, {json: true})
-//             .catch('couldn\'t access AMP REST API')
+    return myords.filter(ele => pair==null || ele.pairName == pair)
   }
-
 
   pairs() {
     return pairs()
