@@ -37,26 +37,28 @@ export default ev => {
         ords.forEach( ord => {
           let {added, cancelled} = Object.assign(orderbook[ord.hash], ord) 
 
-          if (added && added.resolve) {
+          if (added && added.resolve)
 //            console.log(`from raw: ${ord.status} ${ord.pairName} ${ord.pricepoint} ${ord.side} ${ord.baseToken}`)
             added.resolve({event: {payload: orderbook[ord.hash]}})
-          }
-          if (cancelled && cancelled.resolve) {
+
+          if (cancelled && cancelled.resolve)
 //            console.log(`from raw: ${ord.status} ${ord.pairName} ${ord.pricepoint} ${ord.side} ${ord.baseToken}`)
             cancelled.resolve({event: {payload: orderbook[ord.hash]}})
-          }
         })
       }
     } else if (type === 'ERROR') {
       let { message='default', hash } = pld
 
       if ( message.includes("No order with this hash present")
-      || message.includes("i/o timeout") ) {
+      || message.includes("timeout") ) {
         let {cancelled, added} = orderbook[hash]
+
         if (cancelled && cancelled.resolve) 
           cancelled.resolve({event: {payload: orderbook[hash]}})
+
         if (added && added.resolve) 
           added.resolve({event: {payload: orderbook[hash]}})
+
         delete orderbook[hash]
       }
       console.log(data)
