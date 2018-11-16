@@ -1,5 +1,4 @@
 import orderbook, {subscriptions} from '../market/orderbook'
-import {testNested} from '../utils/helpers'
 
 export default ev => {
   let data
@@ -17,14 +16,14 @@ export default ev => {
     if (type === 'ORDER_CANCELLED') {
 //      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
 
-      let prm = orderbook[pld.hash].cancelled
-      if (prm && prm.resolve) prm.resolve(data)
+      let {cancelled} = orderbook[pld.hash]
+      if (cancelled && cancelled.resolve) cancelled.resolve(data)
 
     } else if (type === 'ORDER_ADDED') {
 //      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
 
-      let prm = orderbook[pld.hash].added
-      if (prm && prm.resolve) prm.resolve(data)
+      let {added} = orderbook[pld.hash]
+      if (added && added.resolve) added.resolve(data)
 
     } else if (data.channel === 'raw_orderbook') {
       let ords = pld
@@ -56,8 +55,8 @@ export default ev => {
         let {cancelled, added} = orderbook[hash]
         if (cancelled && cancelled.resolve) 
           cancelled.resolve({event: {payload: orderbook[hash]}})
-        if (ord.added && ord.cancelled.resolve) 
-          ord.added.resolve({event: {payload: orderbook[hash]}})
+        if (added && added.resolve) 
+          added.resolve({event: {payload: orderbook[hash]}})
         delete orderbook[hash]
       }
       console.log(data)
