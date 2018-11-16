@@ -5,6 +5,7 @@ const updatePairs = _ => {
   return rp('http://ampapi:8081/pairs', {json: true})
     .then( data => { return data.data.filter(ele => ele.quoteTokenSymbol === 'WETH' ) } )
     .then( data => {
+      data.forEach( ele => ele.pairName = `${ele.baseTokenSymbol}/${ele.quoteTokenSymbol}` )
       cache.put('pairs', data)
       return data
     })
