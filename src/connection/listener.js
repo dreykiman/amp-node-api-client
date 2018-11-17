@@ -1,4 +1,5 @@
-import orderbook, {subscriptions} from '../market/orderbook'
+import {subscriptions} from '../market/orderbook'
+import * as handlers from './handlers'
 
 export default ev => {
   let data
@@ -13,54 +14,27 @@ export default ev => {
 //console.log(ev.data)
     let {payload: pld, type} = data.event
 
-    if (type === 'ORDER_CANCELLED') {
-//      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
-
-      let {cancelled} = orderbook[pld.hash]
-      if (cancelled && cancelled.resolve) cancelled.resolve(data)
-
-    } else if (type === 'ORDER_ADDED') {
-//      if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
-
-      let {added} = orderbook[pld.hash]
-      if (added && added.resolve) added.resolve(data)
-
-    } else if (data.channel === 'raw_orderbook') {
+    if (type === 'ORDER_CANCELLED')
+      handlers.order_cancelled(data)
+    else if (type === 'ORDER_ADDED')
+      handlers.order_added(data)
+    else if (data.channel === 'raw_orderbook') {
       let ords = pld
       if (type === 'INIT') {
         let pairName = pld.pairName
         ords = pld.orders
-        if (subscriptions[pairName] && subscriptions[pairName].resolve) subscriptions[pairName].resolve()
+        if (subscriptions[pairName]) subscriptions[pairName].resolve()
       }
-
-      if (ords) {
-        ords.forEach( ord => {
-          let {added, cancelled} = Object.assign(orderbook[ord.hash], ord) 
-
-          if (added && added.resolve)
-//            console.log(`from raw: ${ord.status} ${ord.pairName} ${ord.pricepoint} ${ord.side} ${ord.baseToken}`)
-            added.resolve({event: {payload: orderbook[ord.hash]}})
-
-          if (cancelled && cancelled.resolve)
-//            console.log(`from raw: ${ord.status} ${ord.pairName} ${ord.pricepoint} ${ord.side} ${ord.baseToken}`)
-            cancelled.resolve({event: {payload: orderbook[ord.hash]}})
-        })
-      }
+      if (ords)
+        handlers.resolve_from_book(ords)
     } else if (type === 'ERROR') {
       let { message='default', hash } = pld
 
       if ( message.includes("No order with this hash present")
       || message.includes("timeout") ) {
-        let {cancelled, added} = orderbook[hash]
-
-        if (cancelled && cancelled.resolve) 
-          cancelled.resolve({event: {payload: orderbook[hash]}})
-
-        if (added && added.resolve) 
-          added.resolve({event: {payload: orderbook[hash]}})
-
-        delete orderbook[hash]
+        handlers.resolve_on_error(hash)
       }
+
       console.log(data)
     } else {
       console.log(data)
@@ -68,5 +42,6 @@ export default ev => {
   } else {
     console.log(data)
   }
+//    console.log(data)
 }
 
