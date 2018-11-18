@@ -28,12 +28,7 @@ export default ev => {
       if (ords)
         handlers.resolve_from_book(ords)
     } else if (type === 'ERROR') {
-      let { message='default', hash } = pld
-
-      if ( message.includes("No order with this hash present")
-      || message.includes("timeout") ) {
-        handlers.resolve_on_error(hash)
-      }
+      handlers.reject_on_error(pld)
 
       console.log(data)
     } else {

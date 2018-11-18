@@ -26,14 +26,15 @@ export const resolve_from_book = ords => {
   })
 }
 
-export const resolve_on_error = hash => {
+export const reject_on_error = pld => {
+  let { message, hash } = pld
   let {cancelled, added} = orderbook[hash]
 
   if (cancelled)
-    cancelled.resolve({event: {payload: orderbook[hash]}})
+    cancelled.reject(message)
 
   if (added)
-    added.resolve({event: {payload: orderbook[hash]}})
+    added.reject(message)
 
   delete orderbook[hash]
 }
