@@ -15,10 +15,9 @@ export default class {
   }
 
 
-  start( func ) {
-    return
-      new Promise( (res, rej) => wsclient.once('open', res))
-        .then( _ => updatePairs())
+  start() {
+    return new Promise( (res, rej) => wsclient.once('open', res))
+        .then( _ => updatePairs() )
   }
 
 
