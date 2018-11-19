@@ -8,7 +8,7 @@ import deferred from './utils/deferred'
 import { utils } from 'ethers'
 
 
-export default class {
+class AMPClient {
   constructor(wallet) {
     this.wallet = wallet
     this.ws = wsclient
@@ -89,4 +89,4 @@ export default class {
   }
 }
 
-
+export default AMPClient
