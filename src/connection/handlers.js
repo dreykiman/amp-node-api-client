@@ -1,17 +1,34 @@
 import orderbook from '../market/orderbook'
+import deferred from '../utils/deferred'
 
 export const order_cancelled = data => {
-  let {payload:pld} = data.event
+  let pld = data.event.payload
 //  if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
   let {cancelled} = orderbook[pld.hash]
   if (cancelled) cancelled.resolve(data)
 }
 
 export const order_added = data => {
-  let {payload:pld} = data.event
+  let pld = data.event.payload
 //  if (pld) console.log(`${pld.status} ${pld.pairName} ${pld.pricepoint} ${pld.side} ${pld.baseToken}`)
   let {added} = orderbook[pld.hash]
   if (added) added.resolve(data)
+}
+
+export const order_pending = data => {
+  let taker = data.event.payload.matches.takerOrder
+  let {added} = orderbook[taker.hash]
+  Object.assign(orderbook[taker.hash], taker)
+  if (added) added.resolve({event: {payload: orderbook[taker.hash]}})
+  orderbook[taker.hash].pending = new deferred(60000)
+}
+
+export const order_success = data => {
+  let taker = data.event.payload.matches.takerOrder
+  let {added, pending} = orderbook[pld.hash]
+  Object.assign(orderbook[taker.hash], taker)
+  if (added) added.resolve({event: {payload: orderbook[taker.hash]}})
+  if (pending) pending.resolve({event: {payload: orderbook[taker.hash]}})
 }
 
 export const resolve_from_book = ords => {
