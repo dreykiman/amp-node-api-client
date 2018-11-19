@@ -61,6 +61,7 @@ export default class {
       })
   }
 
+
   my_orders(pair) {
     let myords = Object.values(orderbook)
       .filter(ord => ord.userAddress && utils.getAddress(ord.userAddress) === this.wallet.address)
@@ -68,8 +69,9 @@ export default class {
     return myords.filter(ele => pair==null || ele.pairName == pair)
   }
 
+
   pairs() {
-    return pairs()
+    return pairs
   }
 
 
@@ -78,7 +80,7 @@ export default class {
       baseToken: baseAddr,
       quoteToken: quoteAddr
     }
-    let pair = pairs().find(ele => ele.baseTokenAddress === baseAddr && ele.quoteTokenAddress === quoteAddr)
+    let pair = pairs.find(ele => ele.baseTokenAddress === baseAddr && ele.quoteTokenAddress === quoteAddr)
     let pairName = `${pair.baseTokenSymbol}/${pair.quoteTokenSymbol}`
     subscriptions[pairName] = new deferred(20000)
     this.submit(msgRawOrderbook.subscribe(ord))

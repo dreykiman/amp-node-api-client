@@ -1,5 +1,3 @@
-import cache from 'memory-cache'
-
 const accessor = {
   get: function(target, name) {
     // Proxy converts undefined/null keys to strings
@@ -16,12 +14,8 @@ const accessor = {
 }
 
 
-if (!cache.get("orderbook")) {
-  cache.put( "orderbook", new Proxy({}, accessor ))
-}
-
-let orderbook = cache.get("orderbook")
-let subscriptions = {}
+const orderbook = new Proxy({}, accessor )
+const subscriptions = {}
 
 export default orderbook
 export { subscriptions }
