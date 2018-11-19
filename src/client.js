@@ -1,4 +1,3 @@
-import rp from 'request-promise-native'
 import * as msgOrder from './messages/messageOrder'
 import msgRawOrderbook from './messages/messageRawOrderbook'
 import wsclient from './connection/wsclient'
