@@ -11,6 +11,8 @@ const updatePairs = _ => {
       })
       pairs = data
       return pairs
+    }).catch(msg => {
+      console.log("can not access AMP REST API server")
     })
 }
 
