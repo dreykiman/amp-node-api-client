@@ -1,6 +1,6 @@
 import rp from 'request-promise-native'
 
-const pairs = []
+let pairs = []
 
 const updatePairs = _ => {
   return rp('http://ampapi:8081/pairs', {json: true})
@@ -8,9 +8,9 @@ const updatePairs = _ => {
     .then( data => {
       data.forEach( ele => {
         ele.pairName = `${ele.baseTokenSymbol}/${ele.quoteTokenSymbol}`
-        pairs.push(ele)
       })
-      return data
+      pairs = data
+      return pairs
     })
 }
 
@@ -18,4 +18,6 @@ updatePairs()
 setInterval(updatePairs, 600000)
 
 export { updatePairs }
-export default pairs
+export default function() {
+  return pairs
+}

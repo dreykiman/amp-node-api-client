@@ -71,7 +71,7 @@ export default class {
 
 
   pairs() {
-    return pairs
+    return pairs()
   }
 
 
@@ -80,7 +80,7 @@ export default class {
       baseToken: baseAddr,
       quoteToken: quoteAddr
     }
-    let pair = pairs.find(ele => ele.baseTokenAddress === baseAddr && ele.quoteTokenAddress === quoteAddr)
+    let pair = this.pairs().find(ele => ele.baseTokenAddress === baseAddr && ele.quoteTokenAddress === quoteAddr)
     let pairName = `${pair.baseTokenSymbol}/${pair.quoteTokenSymbol}`
     subscriptions[pairName] = new deferred(20000)
     this.submit(msgRawOrderbook.subscribe(ord))
