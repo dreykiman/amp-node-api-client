@@ -17,6 +17,14 @@ class AMPClient {
   start() {
     return new Promise( (res, rej) => wsclient.once('open', res))
         .then( _ => updatePairs() )
+        .then( pairs => {
+          this.decimals = pairs.reduce( (decs, ele) => {
+            decs[ele.baseTokenAddress] = ele.baseTokenDecimals
+            decs[ele.quoteTokenAddress] = ele.quoteTokenDecimals
+            return decs
+          }, {})
+          return pairs
+        })
   }
 
 
@@ -30,6 +38,8 @@ class AMPClient {
 
   new_order(order) {
     order.userAddress = this.wallet.address
+    order.baseTokenDecimals = this.decimals[order.baseTokenAddress]
+    order.quoteTokenDecimals = this.decimals[order.quoteTokenAddress]
 
     return msgOrder.new_order(order).sign(this.wallet)
       .then( this.submit )
@@ -39,7 +49,7 @@ class AMPClient {
         order.added = new deferred(40000)
         return order.added.promise
       }).catch( msg => {
-        throw {err: 'new order failed', msg, order, time: Date.now()}
+        throw {err: 'new order failed', msg, msgstr: msg.toString(), order, time: Date.now()}
       })
   }
 

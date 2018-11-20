@@ -23,17 +23,26 @@ class msgOrder {
     // pricePoints ~ price * priceMultiplier ~ price * 1e6
     let amountPrecisionMultiplier = 1e6
     let pricePrecisionMultiplier = 1e9
-    let amountMultiplier = utils.bigNumberify('1000000000000000000') //1e18
-    let priceMultiplier = utils.bigNumberify('1000000000') //1e9
+
+    let decimalsDiff = this.ord.baseTokenDecimals - this.ord.quoteTokenDecimals
+
+    if (decimalsDiff < 0) throw { err: 'Pair currently not supported (decimals error)' }
+
+    let defaultPriceMultiplier = utils.bigNumberify('1000000000')
+    let decimalsPriceMultiplier = utils.bigNumberify((10 ** decimalsDiff).toString())
+
+    let amountMultiplier = utils.bigNumberify((10 ** this.ord.baseTokenDecimals).toString())
+    let priceMultiplier = defaultPriceMultiplier
+    //  let priceMultiplier = defaultPriceMultiplier.mul(decimalsPriceMultiplier)
+
     let amount = round(this.ord.amount * amountPrecisionMultiplier, 0)
     let price = round(this.ord.price * pricePrecisionMultiplier, 0)
   
-    let amountPoints = utils
-      .bigNumberify(amount)
+    let amountPoints = utils.bigNumberify(amount)
       .mul(amountMultiplier)
       .div(utils.bigNumberify(amountPrecisionMultiplier))
-    let pricePoints = utils
-      .bigNumberify(price)
+
+    let pricePoints = utils.bigNumberify(price)
       .mul(priceMultiplier)
       .div(utils.bigNumberify(pricePrecisionMultiplier))
   
