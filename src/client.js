@@ -27,7 +27,7 @@ class AMPClient {
 
   start() {
     return new Promise( (res, rej) => wsclient.once('open', res))
-        .then( _ => info)
+        .then( _ => this.info())
         .then( _ => updatePairs() )
         .then( pairs => {
           this.decimals = pairs.reduce( (decs, ele) => {
