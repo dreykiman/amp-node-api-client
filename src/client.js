@@ -2,7 +2,7 @@ import * as msgOrder from './messages/messageOrder'
 import msgRawOrderbook from './messages/messageRawOrderbook'
 import wsclient from './connection/wsclient'
 import orderbook, {subscriptions} from './market/orderbook'
-import pairs, {updatePairs, updateFees} from './market/pairs'
+import pairs, {updatePairs, updateInfo} from './market/pairs'
 import deferred from './utils/deferred'
 import { utils } from 'ethers'
 
@@ -16,11 +16,12 @@ class AMPClient {
 
   start() {
     return new Promise( (res, rej) => wsclient.once('open', res))
-        .then( _ => updateFees() )
-        .then( fees => {
+        .then( _ => updateInfo() )
+        .then( info => {
+          this.exchangeAddress = info.exchangeAddress
           this.makeFee = {}
           this.takeFee = {}
-          fees.forEach(ele=> {
+          into.fees.forEach(ele=> {
             this.makeFee[ele.quote] = ele.makeFee
             this.takeFee[ele.quote] = ele.takeFee
           })
