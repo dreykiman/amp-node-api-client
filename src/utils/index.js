@@ -1,2 +1,2 @@
-import { getPricePoints } from './helpers'
+import { getPricePoints, reverseAmount, reversePrice } from './helpers'
 export default { getPricePoints, reverseAmount, reversePrice }
