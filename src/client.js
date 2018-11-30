@@ -2,7 +2,7 @@ import * as msgOrder from './messages/messageOrder'
 import msgRawOrderbook from './messages/messageRawOrderbook'
 import wsclient from './connection/wsclient'
 import orderbook, {subscriptions} from './market/orderbook'
-import pairs, {updatePairs} from './market/pairs'
+import pairs, {updatePairs, updateFees} from './market/pairs'
 import deferred from './utils/deferred'
 import { utils } from 'ethers'
 
@@ -16,7 +16,15 @@ class AMPClient {
 
   start() {
     return new Promise( (res, rej) => wsclient.once('open', res))
-        .then( _ => updatePairs() )
+        .then( _ => updateFees() )
+        .then( fees => {
+          this.makeFee = {}
+          this.takeFee = {}
+          fees.forEach(ele=> {
+            this.makeFee[ele.quote] = ele.makeFee
+            this.takeFee[ele.quote] = ele.takeFee
+          })
+        }).then( _ => updatePairs() )
         .then( pairs => {
           this.decimals = pairs.reduce( (decs, ele) => {
             decs[ele.baseTokenAddress] = ele.baseTokenDecimals
@@ -73,8 +81,8 @@ class AMPClient {
 
   my_orders(pair) {
     let myords = Object.values(orderbook)
-      .filter(ord => ord.userAddress && utils.getAddress(ord.userAddress) === this.wallet.address)
-
+      .filter(ord => ord.userAddress && ord.userAddress.toLowerCase() === this.wallet.address.toLowerCase())
+    return myords
     return myords.filter(ele => pair==null || ele.pairName == pair)
   }
 

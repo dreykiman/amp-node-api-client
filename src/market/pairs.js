@@ -16,10 +16,20 @@ const updatePairs = _ => {
     })
 }
 
+const updateFees = _ => {
+  return rp('http://ampapi:8081/info/fees', {json: true})
+    .then( data => data.data )
+    .catch(msg => {
+      console.log("can not access AMP REST API server")
+    })
+}
+
 updatePairs()
+updateFees()
 setInterval(updatePairs, 600000)
 
-export { updatePairs }
+export { updatePairs, updateFees }
 export default function() {
   return pairs
 }
+
