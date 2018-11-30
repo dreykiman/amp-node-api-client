@@ -37,3 +37,24 @@ export const getPricePoints = (price, quoteTokenDecimals) => {
   return pricePoints
 }
 
+export const reversePrice = (pricepoint, quoteDec) => {
+  let precisionMultiplier = 1e9
+  let priceMultiplier = ethers.utils.bigNumberify(10).pow(18)
+  let quoteMultiplier = ethers.utils.bigNumberify(10).pow(quoteDec)
+  pricepoint = ethers.utils.bigNumberify(pricepoint)
+  pricepoint = pricepoint.mul(precisionMultiplier).div(priceMultiplier).div(quoteMultiplier)
+
+  let price = pricepoint.toString()/precisionMultiplier
+
+  return price
+}
+
+export const reverseAmount = (amount, baseDec) => {
+  let precisionMultiplier = 1e9
+  let baseMultiplier = ethers.utils.bigNumberify(10).pow(baseDec)
+  amount = ethers.utils.bigNumberify(amount)
+  amount = amount.mul(precisionMultiplier).div(baseMultiplier)
+
+  return amount.toString()/precisionMultiplier
+}
+
