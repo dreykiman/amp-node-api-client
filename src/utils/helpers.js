@@ -24,3 +24,15 @@ export const validator = {
   }
 }
 
+export const getPricePoints = (price, quoteTokenDecimals) => {
+  let precisionMultiplier = utils.bigNumberify(10).pow(9)
+  let quoteMultiplier = utils.bigNumberify(10).pow(quoteTokenDecimals)
+  let priceMultiplier = utils.bigNumberify(10).pow(18)
+
+  let pricePoints = price * precisionMultiplier
+  pricePoints = utils.bigNumberify(pricePoints.toFixed(0))
+  pricePoints = pricePoints.mul(priceMultiplier).mul(quoteMultiplier).div(precisionMultiplier)
+
+  return pricePoints
+}
+
