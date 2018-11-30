@@ -3,7 +3,8 @@ import messageListener from './listener'
 
 
 const createClient = () => {
-  let ws = new WebSocket("wss://engine.amp.exchange/socket")
+  let ws = new WebSocket("wss://amp.exchange/socket")
+//  let ws = new WebSocket("ws://ampapi:8081/socket")
 
   ws.onmessage = messageListener
 

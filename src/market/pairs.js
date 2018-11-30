@@ -3,7 +3,7 @@ import rp from 'request-promise-native'
 let pairs = []
 
 const updatePairs = _ => {
-  return rp('http://engine.amp.exchange/pairs', {json: true})
+  return rp('https://amp.exchange/api/pairs', {json: true})
     .then( data => data.data )//.filter(ele => ele.quoteTokenSymbol === 'USDC' ) )
     .then( data => {
       data.forEach( ele => {
@@ -17,7 +17,7 @@ const updatePairs = _ => {
 }
 
 const updateInfo = _ => {
-  return rp('http://engine.amp.exchange/info', {json: true})
+  return rp('https://amp.exchange/api/info', {json: true})
     .then( data => data.data )
     .catch(msg => {
       console.log("can not access AMP REST API server")
