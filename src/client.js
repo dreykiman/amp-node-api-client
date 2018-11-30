@@ -18,7 +18,7 @@ class AMPClient {
       this.exchangeAddress = info.exchangeAddress
       this.makeFee = {}
       this.takeFee = {}
-      into.fees.forEach(ele=> {
+      info.fees.forEach(ele=> {
         this.makeFee[ele.quote] = ele.makeFee
         this.takeFee[ele.quote] = ele.takeFee
       })
