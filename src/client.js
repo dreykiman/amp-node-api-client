@@ -13,19 +13,22 @@ class AMPClient {
     this.ws = wsclient
   }
 
+  info() {
+    return updateInfo().then( info => {
+      this.exchangeAddress = info.exchangeAddress
+      this.makeFee = {}
+      this.takeFee = {}
+      into.fees.forEach(ele=> {
+        this.makeFee[ele.quote] = ele.makeFee
+        this.takeFee[ele.quote] = ele.takeFee
+      })
+    })
+  }
 
   start() {
     return new Promise( (res, rej) => wsclient.once('open', res))
-        .then( _ => updateInfo() )
-        .then( info => {
-          this.exchangeAddress = info.exchangeAddress
-          this.makeFee = {}
-          this.takeFee = {}
-          into.fees.forEach(ele=> {
-            this.makeFee[ele.quote] = ele.makeFee
-            this.takeFee[ele.quote] = ele.takeFee
-          })
-        }).then( _ => updatePairs() )
+        .then( _ => info)
+        .then( _ => updatePairs() )
         .then( pairs => {
           this.decimals = pairs.reduce( (decs, ele) => {
             decs[ele.baseTokenAddress] = ele.baseTokenDecimals
