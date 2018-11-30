@@ -13,39 +13,19 @@ class msgOrder {
   async sign(signer) {
     let order = {}
 
-    // The amountPrecisionMultiplier and pricePrecisionMultiplier are temporary multipliers
-    // that are used to turn decimal values into rounded integers that can be converted into
-    // big numbers that can be used to compute large amounts (ex: in wei) with the amountMultiplier
-    // and priceMultiplier. After multiplying with amountMultiplier and priceMultiplier, the result
-    // numbers are divided by the precision multipliers.
-    // So in the end we have:
-    // amountPoints ~ amount * amountMultiplier ~ amount * 1e18
-    // pricePoints ~ price * priceMultiplier ~ price * 1e6
-    let amountPrecisionMultiplier = 1e6
-    let pricePrecisionMultiplier = 1e9
+    let precisionMultiplier = utils.bigNumberify(10).pow(9)
+    let baseMultiplier = utils.bigNumberify(10).pow(this.ord.baseTokenDecimals)
+    let quoteMultiplier = utils.bigNumberify(10).pow(this.ord.quoteTokenDecimals)
+    let priceMultiplier = utils.bigNumberify(10).pow(18)
 
-    let decimalsDiff = this.ord.baseTokenDecimals - this.ord.quoteTokenDecimals
+    let pricePoints = this.ord.price * precisionMultiplier
+    pricePoints = utils.bigNumberify(pricePoints.toFixed(0))
+    pricePoints = pricePoints.mul(priceMultiplier).mul(quoteMultiplier).div(precisionMultiplier)
 
-    if (decimalsDiff < 0) throw { err: 'Pair currently not supported (decimals error)' }
+    let amountPoints = this.ord.amount * precisionMultiplier
+    amountPoints = utils.bigNumberify(amountPoints.toFixed(0))
+    amountPoints = amountPoints.mul(baseMultiplier).div(precisionMultiplier)
 
-    let defaultPriceMultiplier = utils.bigNumberify('1000000000')
-    let decimalsPriceMultiplier = utils.bigNumberify((10 ** decimalsDiff).toString())
-
-    let amountMultiplier = utils.bigNumberify((10 ** this.ord.baseTokenDecimals).toString())
-    let priceMultiplier = defaultPriceMultiplier
-    //  let priceMultiplier = defaultPriceMultiplier.mul(decimalsPriceMultiplier)
-
-    let amount = round(this.ord.amount * amountPrecisionMultiplier, 0)
-    let price = round(this.ord.price * pricePrecisionMultiplier, 0)
-  
-    let amountPoints = utils.bigNumberify(amount)
-      .mul(amountMultiplier)
-      .div(utils.bigNumberify(amountPrecisionMultiplier))
-
-    let pricePoints = utils.bigNumberify(price)
-      .mul(priceMultiplier)
-      .div(utils.bigNumberify(pricePrecisionMultiplier))
-  
     order.exchangeAddress = this.ord.exchangeAddress
     order.userAddress = this.ord.userAddress
     order.baseToken = this.ord.baseTokenAddress
