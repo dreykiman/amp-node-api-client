@@ -18,10 +18,10 @@ export default ev => {
       handlers.order_cancelled(data)
     else if (type === 'ORDER_ADDED')
       handlers.order_added(data)
-    else if (type === 'ORDER_PENDING')
-      handlers.order_pending(data)
-    else if (type === 'ORDER_SUCCESS')
-      handlers.order_success(data)
+//    else if (type === 'ORDER_PENDING')
+//      handlers.order_pending(data)
+//    else if (type === 'ORDER_SUCCESS')
+//      handlers.order_success(data)
     else if (data.channel === 'raw_orderbook') {
       let ords = pld
       if (type === 'INIT') {
