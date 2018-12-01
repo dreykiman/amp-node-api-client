@@ -48,6 +48,9 @@ process.on('SIGINT', () => {
 })
 
 
+process.on( 'SIGUSR1', () => ws.close() )
+
+
 process.once('SIGUSR2', () => {
   ws.removeAllListeners()
   ws.close()
