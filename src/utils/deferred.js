@@ -7,6 +7,7 @@ export default class {
 
     if (timeOut != null) {
       setTimeout( _=> {
+        console.log( "Promise rejected due to expiration timer" )
         this.reject( {err: "rejected due to expiration timer"} )
       }, timeOut )
     }
