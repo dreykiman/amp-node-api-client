@@ -42,12 +42,14 @@ const createClient = () => {
 
 process.on('SIGINT', () => {
   console.log("Caught interrupt signal")
+  ws.removeAllListeners()
   ws.close()
   setTimeout(process.exit, 500)
 })
 
 
 process.once('SIGUSR2', () => {
+  ws.removeAllListeners()
   ws.close()
   setTimeout(() => process.kill(process.pid, 'SIGUSR2'), 500)
 })
