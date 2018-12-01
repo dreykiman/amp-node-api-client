@@ -22,7 +22,7 @@ export const order_pending = data => {
   let {added} = Object.assign(orderbook[taker.hash], taker)
 
   if (added && added.resolve) added.resolve({event: {payload: orderbook[taker.hash]}})
-  orderbook[taker.hash].pending = new deferred(60000)
+//  orderbook[taker.hash].pending = new deferred(60000)
 }
 
 export const order_success = data => {
