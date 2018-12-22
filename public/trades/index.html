@@ -1,0 +1,137 @@
+<html>
+<head>
+<title>Trades feed</title>
+
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+<style>
+
+body {
+  font-family: 'Roboto';font-size: 22px;
+}
+
+table {
+  table-layout: fixed;
+}
+
+tr.PENDING {
+  color: red;
+}
+
+td {
+  text-align: left;
+  vertical-align: text-top;
+  padding: 0.3em;
+}
+
+</style>
+
+<script src="https://cdn.ethers.io/scripts/ethers-v4.min.js"
+        charset="utf-8"
+        type="text/javascript">
+</script>
+
+<script src="/utils.js"></script>
+
+<script>
+
+function onload() {
+  let pairreq = new XMLHttpRequest()
+
+  var decimals = {}
+  pairreq.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      let tbl = document.getElementById("feed")
+
+      let data = JSON.parse(this.responseText)
+      decimals = data.reduce( function(decs, pair) {
+        decs[pair.baseTokenSymbol] = pair.baseTokenDecimals
+        decs[pair.quoteTokenSymbol] = pair.quoteTokenDecimals
+        return decs
+      }, {})
+
+      let ws = new WebSocket(wsaddr)
+
+      ws.onerror = location.reload
+      ws.onclose = location.reload
+
+      ws.onmessage = ev => {
+        let data = JSON.parse(ev.data)
+        if(data.channel == "trades" && data.event && data.event.payload){
+          data = data.event.payload
+
+          if (data!=null){
+            data.forEach(function(trd){
+
+              let [baseSym, quoteSym] = trd.pairName.split('/')
+              trd.amount = reverseAmount(trd.amount, decimals[baseSym])
+              trd.price = reversePrice(trd.pricepoint, decimals[quoteSym])
+
+
+              for (let j=tbl.rows.length;j--;)
+                if (tbl.rows[j].hash == trd.hash) {
+                  tbl.deleteRow(j)
+                  break
+                }
+
+              let i = 0
+              for (;i<tbl.rows.length;i++)
+                if (new Date(tbl.rows[i].cells[4].innerHTML) <= new Date(trd.createdAt))
+                  break
+
+              let row = tbl.insertRow(i)
+              row.className = trd.status
+              row.hash = trd.hash
+              row.insertCell().innerHTML = trd.pairName
+              row.insertCell().innerHTML = trd.amount
+              row.insertCell().innerHTML = trd.price
+              row.insertCell().innerHTML = trd.status
+              row.insertCell().innerHTML = new Date(trd.createdAt)
+            })
+          }
+        }
+      }
+ 
+      data.forEach( ele => {
+          let pairName = ele.baseTokenSymbol+"/"+ele.quoteTokenSymbol
+
+          ws.addEventListener("open", _ => {
+            ws.send(JSON.stringify({
+              "channel": "trades",
+              "event": {
+                "type": "SUBSCRIBE",
+                "payload": {
+                  "baseToken": ele.baseTokenAddress,
+                  "quoteToken": ele.quoteTokenAddress,
+                }
+              }
+            }))
+          })
+       })
+    }
+  }
+
+  pairreq.open("GET", "/api/pairs")
+  pairreq.send()
+}
+
+</script>
+
+</head>
+
+<body onload=onload()>
+
+<table>
+<thead>
+<tr>
+<th>pair</th>
+<th>amount</th>
+<th>price</th>
+<th>status</th>
+<th>createdAt</th>
+</tr>
+</thead>
+<tbody id=feed>
+</tbody>
+</table>
+</body>
+</html>

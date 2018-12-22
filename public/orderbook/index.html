@@ -1,0 +1,205 @@
+<html>
+<head>
+<title>Orderbook</title>
+
+<link rel="stylesheet" type="text/css" href="/dots.css">
+
+<style>
+
+tr.pairName td {
+  font-weight: bold;
+}
+
+td {
+  vertical-align: text-top;
+  padding: 0.3em;
+  min-width: 550px;
+}
+
+td.bids {
+  border: 1px solid blue;
+  color: blue;
+}
+
+td.asks {
+  border: 1px solid red;
+  color: red;
+}
+
+.saving span {
+  font-size: 1em;
+}
+</style>
+
+<script src="https://cdn.ethers.io/scripts/ethers-v4.min.js"
+        charset="utf-8"
+        type="text/javascript">
+</script>
+
+<script src="/utils.js"></script>
+
+<script>
+
+let btn0 = document.createElement("button")
+btn0.innerHTML= "POPULATE"
+
+let rows = {}
+
+let decimals = {}
+
+function populate() {
+    let popget = new XMLHttpRequest()
+
+    this.innerHTML = "POPULATING..."
+    this.disabled = true
+
+    popget.onreadystatechange = function() {
+      if (this.readyState == 4) {
+        btn0.innerHTML = "POPULATE AGAIN"
+        btn0.disabled = false
+
+/*
+        let data = JSON.parse(this.responseText)
+        data.forEach( ele => {
+          let pairName;
+          if ('pair' in ele && 'err' in ele) {
+            pairName = `${ele.pair.baseTokenSymbol}/${ele.pair.quoteTokenSymbol}`
+            rows[pairName].cells[2].innerHTML = ele.err
+          } else {
+            let ords = ele.map( ord => {
+              if (ord.event.payload) {
+                let pld = ord.event.payload
+                pairName = pld.pairName
+                if (pld.status=="CANCELLED")
+                  return `<del>${pld.side} ${pld.pricepoint} ${pld.amount}</del>`
+                return `${pld.side} ${pld.pricepoint} ${pld.amount}`
+              } else console.log(ord.toString())
+            })
+*/
+/*
+            if(pairName==null) console.log(ords)
+            else {
+              ['BUY', 'SELL'].forEach( (name, ind) => {
+                rows[pairName].cells[2+ind].innerHTML = ords.filter(ele=>ele.includes(name)).join("<br>")
+              })
+            }
+*/
+//          }
+///        })
+      }
+    }
+
+    popget.open("GET", "/api/populate")
+    popget.send()
+}
+
+function onload() {
+  btn0.onclick = populate
+
+  var btn1 = document.createElement("button")
+  btn1.innerHTML= "CANCEL ALL"
+
+  btn1.onclick = function() {
+    let popget = new XMLHttpRequest()
+    popget.open("GET", "/api/cancelall")
+    popget.send()
+  }
+
+  let pairreq = new XMLHttpRequest()
+
+  pairreq.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      let tbl = document.createElement("table")
+      document.body.appendChild(tbl)
+
+      let data = JSON.parse(this.responseText)
+
+      let ws = new WebSocket(wsaddr)
+      var ob = {}
+
+      ws.onerror = location.reload
+      ws.onclose = location.reload
+
+      ws.onmessage = ev => {
+        let data = JSON.parse(ev.data)
+        data = data.event && data.event.payload
+
+        console.log(JSON.stringify(data))
+
+        if(data.asks!=null && data.bids!=null) {
+          ["bids", "asks"].forEach( function(name, icell) {
+            let pair = data.pairName
+
+            document.getElementById("lastpair").innerHTML = pair
+            let [baseSym,quoteSym] = pair.split("/")
+
+            data[name].forEach( function(ele) {
+              if( ele.amount == "0")
+                delete ob[pair][name][ele.pricepoint]
+              else
+                ob[pair][name][ele.pricepoint] = ele.amount
+            })
+            let tot = 0
+            let line = Object.keys(ob[pair][name]).sort( (a,b) => name==="asks" ? a-b : b-a)
+              .map( price => {
+                let pr = reversePrice(price, decimals[quoteSym])
+                let am = reverseAmount(ob[pair][name][price], decimals[baseSym])
+                tot += am*pr
+                return 'price: '+pr.toFixed(7)+'<sup>'+quoteSym
+                  +'</sup>, amount: '+am.toFixed(7)+'<sup>'+baseSym
+                  +'</sup> / '+(pr*am).toFixed(7)+'<sup>'+quoteSym+'</sup>'
+              })
+              .join("<br>")
+
+            rows[pair].cells[icell].innerHTML = '<b>total: '+tot.toFixed(6)+'<sup>'+quoteSym+'</sup></b><br>'+line
+          })
+
+        }
+      }
+ 
+
+      data.forEach( ele => {
+          let pairName = ele.baseTokenSymbol+"/"+ele.quoteTokenSymbol
+          decimals[ele.baseTokenSymbol] = ele.baseTokenDecimals
+          decimals[ele.quoteTokenSymbol] = ele.quoteTokenDecimals
+
+          let row = tbl.insertRow()
+          row.className = "pairName"
+          row.insertCell().innerHTML = pairName
+
+          rows[pairName] = tbl.insertRow()
+         
+          rows[pairName].insertCell().className = 'bids'
+          rows[pairName].insertCell().className = 'asks'
+          rows[pairName].insertCell().className = 'debug'
+          rows[pairName].insertCell().className = 'debug'
+
+          ob[pairName] = {asks: {}, bids: {}}
+
+          ws.addEventListener("open", _ => { ws.send(JSON.stringify({
+            "channel": "orderbook",
+            "event": {
+              "type": "SUBSCRIBE",
+              "payload": {
+                "baseToken": ele.baseTokenAddress,
+                "quoteToken": ele.quoteTokenAddress,
+              }
+            }
+          }))})
+     })
+    }
+  }
+
+  pairreq.open("GET", "/api/pairs")
+  pairreq.send()
+}
+
+</script>
+
+</head>
+
+<body onload=onload()>
+<h3><p class="saving">Most recently changed pair: <span id='lastpair'></span><span>.</span><span>.</span><span>.</span></p><h3>
+
+</body>
+</html>

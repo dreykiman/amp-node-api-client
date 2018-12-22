@@ -1,4 +1,4 @@
-import orderbook from '../market/orderbook'
+import {orderbook} from '../amp'
 import deferred from '../utils/deferred'
 
 export const order_cancelled = data => {

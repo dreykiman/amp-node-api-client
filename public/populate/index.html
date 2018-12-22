@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>Orders feed</title>
+
+<link rel="stylesheet" type="text/css" href="/dots.css">
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+
+<style>
+body {
+  font-family: 'Roboto';
+  font-size: 22px;
+}
+
+table {
+white-space: nowrap;
+  table-layout: fixed;
+}
+
+th, td {
+  text-align: left;
+  vertical-align: text-top;
+  padding: 0.3em;
+}
+
+.saving span{
+  font-size: 3em;
+}
+</style>
+
+<script src="https://cdn.ethers.io/scripts/ethers-v4.min.js"
+        charset="utf-8"
+        type="text/javascript">
+</script>
+
+<script src="/utils.js"></script>
+
+<script>
+function populatePair(pairs){
+  if (pairs.length > 0) {
+    let pairName = pairs.pop().pairName
+
+    let pop = new XMLHttpRequest()
+    let tbl = document.getElementById("feed")
+    let rw = tbl.insertRow(0)
+    rw.insertCell().innerHTML = pairName
+    rw.insertCell().innerHTML = '<p class="saving">populating <span>.</span><span>.</span><span>.</span></p>'
+
+    pop.onreadystatechange = function() {
+      if (this.readyState == 4){
+        let orders = JSON.parse(this.responseText)
+
+        Object.keys(orders).forEach(pair => {
+          tbl.rows[0].cells[1].innerHTML = 'err' in orders[pair] ? JSON.stringify(orders[pair]) : "SUCCESS"
+        })
+
+        populatePair(pairs)
+      }
+     }
+
+    pop.open("GET", "/api/populate?pair="+pairName)
+    pop.send()
+
+  }
+}
+
+
+function populate() {
+  let pairreq = new XMLHttpRequest()
+
+  pairreq.onreadystatechange = function() {
+    if (this.readyState == 4){
+      let pairs = JSON.parse(this.responseText)
+
+      if(location.search.length>0) {
+        pairs = pairs.filter(ele => ele.pairName===location.search.split('=')[1])
+      }
+
+      pairs.reverse()
+      populatePair(pairs)
+    }
+  }
+
+  pairreq.open("GET", "/api/pairs")
+  pairreq.send()
+}
+
+
+function onload() {
+  let pairName = location.search.length > 0 ? location.search.split("=")[1] : "ALL"
+  document.getElementById("button").innerHTML = "POPULATE "+pairName
+}
+
+</script>
+
+</head>
+
+<body onload=onload()>
+
+<button onclick="populate()" id="button">Populate</button>
+<table>
+<tbody id=feed>
+</tbody>
+</table>
+</body>
+</html>

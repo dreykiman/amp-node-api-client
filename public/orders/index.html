@@ -1,0 +1,171 @@
+<html>
+<head>
+<title>Orders feed</title>
+
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+<style>
+body {
+  font-family: 'Roboto';font-size: 22px;
+}
+
+table {
+  table-layout: fixed;
+}
+
+tr.PARTIAL_FILLED td:nth-child(4){
+  border: 1px solid black;
+}
+
+tr.FILLED {
+  opacity: 0.4
+}
+
+tr.FILLED {
+  opacity: 0.4
+}
+
+tr.expired {
+  text-decoration: line-through;
+}
+
+tr.CANCELLED {
+  text-decoration: line-through;
+  text-decoration-style: wavy;
+}
+
+tr.BUY{
+  color: Blue;
+}
+tr.SELL{
+  color: Fuchsia;
+}
+
+tr.pairName td {
+  font-weight: bold;
+}
+
+th, td {
+  text-align: left;
+  vertical-align: text-top;
+  padding: 0.3em;
+}
+
+</style>
+
+<script src="https://cdn.ethers.io/scripts/ethers-v4.min.js"
+        charset="utf-8"
+        type="text/javascript">
+</script>
+
+<script src="/utils.js"></script>
+
+<script>
+
+var decimals = {}
+function onload() {
+  let pairreq = new XMLHttpRequest()
+
+  pairreq.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      let tbl = document.getElementById("feed")
+
+      let data = JSON.parse(this.responseText)
+      decimals = data.reduce( function(decs, pair) {
+        decs[pair.baseTokenSymbol] = pair.baseTokenDecimals
+        decs[pair.quoteTokenSymbol] = pair.quoteTokenDecimals
+        return decs
+      }, {})
+
+      let ws = new WebSocket(wsaddr)
+
+      ws.onerror = location.reload
+      ws.onclose = location.reload
+
+      let rows = {}
+      ws.onmessage = ev => {
+        let data = JSON.parse(ev.data)
+        if(data.channel && data.channel == "raw_orderbook" && data.event && data.event.payload){
+          let pair, isINIT = false
+          if (data.event.type==="INIT"){
+            isINIT = true
+            pair = data.event.payload.pairName
+            data = data.event.payload.orders
+          } else {
+            data = data.event.payload
+            pair = data[0].pairName
+          }
+
+          if (data!=null){
+            data.forEach(function(ord){
+              if (ord.hash in rows)
+                rows[ord.hash].className = "expired " + ord.side
+
+              let filled = parseInt(ord.filledAmount*100/ord.amount)
+              let [baseSym, quoteSym] = ord.pairName.split('/')
+              ord.amount = reverseAmount(ord.amount, decimals[baseSym])
+              ord.price = reversePrice(ord.pricepoint, decimals[quoteSym])
+
+              let i = 0
+              if(isINIT)
+                for (;i<tbl.rows.length;i++)
+                  if (new Date(tbl.rows[i].cells[4].innerHTML) < new Date(ord.createdAt))
+                    break
+  
+              let row = tbl.insertRow(i)
+              rows[ord.hash] = row
+              row.className = ord.status+" "+ord.side
+              row.insertCell().innerHTML = ['side','pairName'].map(ele=>ord[ele]).join(" ")
+              row.insertCell().innerHTML = filled+"% / "+ord.amount
+              row.insertCell().innerHTML = ord.price
+              row.insertCell().innerHTML = ord.status
+              row.insertCell().innerHTML = ord.userAddress
+              row.insertCell().innerHTML = new Date(ord.createdAt)
+            })
+          }
+        }
+      }
+ 
+      data.forEach( ele => {
+          let pairName = ele.baseTokenSymbol+"/"+ele.quoteTokenSymbol
+
+          ws.addEventListener("open", _ => {
+            ws.send(JSON.stringify({
+              "channel": "raw_orderbook",
+              "event": {
+                "type": "SUBSCRIBE",
+                "payload": {
+                  "baseToken": ele.baseTokenAddress,
+                  "quoteToken": ele.quoteTokenAddress,
+                }
+              }
+            }))
+          })
+       })
+    }
+  }
+
+  pairreq.open("GET", "/api/pairs")
+  pairreq.send()
+}
+
+</script>
+
+</head>
+
+<body onload=onload()>
+
+<table>
+<thead>
+<tr>
+<th>pair</th>
+<th>amount</th>
+<th>price</th>
+<th>status</th>
+<th>createdAt</th>
+</tr>
+</thead>
+<tbody id=feed>
+</tbody>
+</table>
+</body>
+</html>

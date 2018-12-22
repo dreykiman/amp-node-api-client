@@ -4,7 +4,6 @@ import { validator } from '../utils/helpers'
 export default {
   subscribe: ord => {
     ord = new Proxy(Object.assign({}, ord), validator)
-
     return {
       "channel": "raw_orderbook",
       "event": {

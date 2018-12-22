@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>Orderbook</title>
+
+<script>
+function onload() {
+  let obreq = new XMLHttpRequest()
+
+  obreq.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      let arr = JSON.parse(this.responseText)
+      console.log(arr)
+    }
+  }
+
+  obreq.open("GET", "/api/myorders")
+  obreq.send()
+}
+</script>
+
+</head>
+
+<body onload=onload()>
+
+</body>
+</html>
