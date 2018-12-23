@@ -1,8 +1,7 @@
 import { utils } from 'ethers'
 import { round, randInt, validator } from '../utils/helpers'
 import { getRandomNonce, getOrderHash, getOrderCancelHash } from '../utils/crypto'
-import { tokenSymbols, decimals } from '../amp/pairs'
-import { info } from '../amp/info'
+import { tokens } from '../amp/tokens'
 
 
 const msgNewOrder = ord => ({
@@ -11,9 +10,12 @@ const msgNewOrder = ord => ({
   async sign(wallet) {
     let order = {}
 
+    let baseToken = tokens.find(ele => ele.address.toLowerCase() === this.ord.baseTokenAddress.toLowerCase())
+    let quoteToken = tokens.find(ele => ele.address.toLowerCase() === this.ord.quoteTokenAddress.toLowerCase())
+
     let precisionMultiplier = utils.bigNumberify(10).pow(9)
-    let baseMultiplier = utils.bigNumberify(10).pow(decimals[this.ord.baseTokenAddress])
-    let quoteMultiplier = utils.bigNumberify(10).pow(decimals[this.ord.quoteTokenAddress])
+    let baseMultiplier = utils.bigNumberify(10).pow(baseToken.decimals)
+    let quoteMultiplier = utils.bigNumberify(10).pow(quoteToken.decimals)
     let priceMultiplier = utils.bigNumberify(10).pow(18)
 
     let pricePoints = this.ord.price * precisionMultiplier
@@ -24,8 +26,6 @@ const msgNewOrder = ord => ({
     amountPoints = utils.bigNumberify(amountPoints.toFixed(0))
     amountPoints = amountPoints.mul(baseMultiplier).div(precisionMultiplier)
 
-    let quote = tokenSymbols[this.ord.quoteTokenAddress]
-
     order.exchangeAddress = this.ord.exchangeAddress
     order.userAddress = wallet.address
     order.baseToken = this.ord.baseTokenAddress
@@ -33,8 +33,8 @@ const msgNewOrder = ord => ({
     order.amount = amountPoints.toString()
     order.pricepoint = pricePoints.toString()
     order.side = this.ord.side
-    order.makeFee = info.makeFee[].toString()
-    order.takeFee = info.takeFee[].toString()
+    order.makeFee = quoteToken.makeFee
+    order.takeFee = quoteToken.takeFee
     order.nonce = getRandomNonce()
     order.hash = getOrderHash(order)
 
