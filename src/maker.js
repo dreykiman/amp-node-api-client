@@ -3,10 +3,8 @@ import * as amp from './amp'
 import keys from '../keys.json'
 import {shuffleArray,reversePrice} from './utils/helpers'
 import ws from './connection/wsclient'
-
 import {createbooks} from './binance'
 
-//let provider = getDefaultProvider('rinkeby')
 const wallet = new Wallet(keys.AMPmaker)
 
 const delay = tt => new Promise( (res,rej) => {
@@ -50,19 +48,18 @@ const createOrders = payload => {
 }
 
 
-const submitall = _ => {
-  let books = createbooks(amp.pairs.slice(0,20))
+const makeall = _ => {
+  let books = createbooks(amp.pairs.slice(0,25))
     .map(bk => bk.then(createOrders))
     .map(bk => bk.catch(msg => console.log({msg})))
 
   return Promise.all(books).then(_=>console.log('alldone'))
-//    .then( _=>setTimeout(submitall, 200000))
 }
 
 Promise.all([amp.updateInfo(), amp.updatePairs(), amp.updateTokens()])
   .then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
   .then( arr => Promise.all(arr) )
-  .then( submitall )
+  .then( makeall )
   .catch(msg => console.log({err: msg.toString()}))
   .then(_=>ws.close())
  

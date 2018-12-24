@@ -2,12 +2,12 @@
   "name": "amp-node-api-client",
   "version": "1.0.0",
   "description": "API for AMP Bot",
-  "main": "./dist/app.js",
+  "main": "./dist/maker.js",
   "scripts": {
     "build": "babel src --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
-    "start": "npm run build && node dist/app.js",
     "www": "npm run build && forever start dist/www.js",
-    "test": "npm run build && forever start --minUptime 6000000 --spinSleepTime 300000 dist/app.js"
+    "start": "npm run build && run(){ forever start --minUptime 6000000 -l $1.forever.log --spinSleepTime $2 dist/$1; } && run",
+    "test": "npm run build && run(){ node dist/$1; } && run"
   },
   "author": "Andrey",
   "license": "ISC",
