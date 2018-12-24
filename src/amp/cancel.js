@@ -20,5 +20,9 @@ function cancel(hash) { return msgCancelOrder(hash)
   })
 }
 
-export {cancel}
+function cancelall(pair) { return this.myorders(pair)
+  .map(ord => this.cancel(ord.hash))
+}
+
+export {cancel, cancelall}
 

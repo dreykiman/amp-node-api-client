@@ -31,8 +31,6 @@ export default ev => {
         handlers.resolve_from_book(ords)
     } else if (type === 'ERROR') {
       handlers.reject_on_error(pld)
-
-      console.log(data)
     } else {
       console.log(data)
     }

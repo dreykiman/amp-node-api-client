@@ -7,7 +7,7 @@
     "build": "babel src --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "start": "npm run build && node dist/app.js",
     "www": "npm run build && forever start dist/www.js",
-    "test": "npm run build && forever start --minUptime 60000 --spinSleepTime 5000 dist/app.js"
+    "test": "npm run build && forever start --minUptime 6000000 --spinSleepTime 300000 dist/app.js"
   },
   "author": "Andrey",
   "license": "ISC",

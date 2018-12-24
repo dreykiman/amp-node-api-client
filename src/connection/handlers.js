@@ -45,6 +45,7 @@ export const resolve_from_book = ords => {
 export const reject_on_error = pld => {
   let { message, hash } = pld
   let {cancelled, added} = orderbook[hash]
+  console.log(message)
 
   if (cancelled && cancelled.reject) cancelled.reject(message)
   if (added && added.reject) added.reject(message)

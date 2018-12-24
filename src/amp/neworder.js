@@ -6,8 +6,9 @@ import {orderbook} from './orderbook'
 
 function neworder(order) { return msgNewOrder(order)
   .sign(this.wallet)
-  .then( msg => ws.send(JSON.stringify(msg)) )
   .then( msg => {
+    ws.send(JSON.stringify(msg))
+
     let {payload, hash} = msg.event
     let order = Object.assign(orderbook[hash], payload)
     order.added = new deferred(40000)
@@ -18,4 +19,3 @@ function neworder(order) { return msgNewOrder(order)
 }
 
 export {neworder}
-

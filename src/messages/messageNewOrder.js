@@ -1,7 +1,7 @@
 import { utils } from 'ethers'
 import { round, randInt, validator } from '../utils/helpers'
 import { getRandomNonce, getOrderHash, getOrderCancelHash } from '../utils/crypto'
-import { tokens } from '../amp/tokens'
+import { tokens, info } from '../amp'
 
 
 const msgNewOrder = ord => ({
@@ -26,7 +26,7 @@ const msgNewOrder = ord => ({
     amountPoints = utils.bigNumberify(amountPoints.toFixed(0))
     amountPoints = amountPoints.mul(baseMultiplier).div(precisionMultiplier)
 
-    order.exchangeAddress = this.ord.exchangeAddress
+    order.exchangeAddress = info.exchangeAddress
     order.userAddress = wallet.address
     order.baseToken = this.ord.baseTokenAddress
     order.quoteToken = this.ord.quoteTokenAddress
