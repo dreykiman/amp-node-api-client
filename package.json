@@ -12,16 +12,15 @@
   "author": "Andrey",
   "license": "ISC",
   "dependencies": {
-    "babel-core": "^6.26.3",
     "binance-api-node": "^0.8.13",
     "ethers": "^4.0.7",
-    "express": "^4.16.4",
     "forever": "^0.15.3",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "ws": "^6.1.0"
   },
   "devDependencies": {
+    "babel-core": "^6.26.3",
     "babel-cli": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0"
