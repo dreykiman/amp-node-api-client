@@ -1,7 +1,7 @@
-import msgCancelOrder from '../messages/messageCancelOrder'
-import ws from '../connection/wsclient'
-import deferred from '../utils/deferred'
-import {orderbook} from './orderbook'
+import msgCancelOrder from '../../messages/messageCancelOrder'
+import ws from '../../connection/wsclient'
+import deferred from '../../utils/deferred'
+import {orderbook} from '../orderbook'
 
 /**
  * cancels an order with specified hash

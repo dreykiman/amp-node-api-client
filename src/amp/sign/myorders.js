@@ -1,4 +1,4 @@
-import {orderbook} from './orderbook'
+import {orderbook} from '../orderbook'
 
 /**
  * returns an array of orders made by this.wallet for specified pair name, if pair is not specified returns all orders
