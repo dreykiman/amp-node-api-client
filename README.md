@@ -16,12 +16,12 @@ npm test maker.js
 npm test taker.js
 ```
 
-* how to start maker every hour
+* how to start maker every hour (3600000 ms)
 ```javascript
 npm start maker.js 3600000
 ```
 
-* how to start taker every hour
+* how to start taker every hour (3600000 ms)
 ```javascript
 npm start taker.js 3600000
 ```

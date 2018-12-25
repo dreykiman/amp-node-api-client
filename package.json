@@ -5,6 +5,7 @@
   "main": "./dist/maker.js",
   "scripts": {
     "build": "babel src --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
+    "gen-docs": "jsdoc src/ -d public/doc -c docdash.json -R README.md",
     "www": "npm run build && forever start dist/www.js",
     "start": "npm run build && run(){ forever start --minUptime 6000000 -l $1.forever.log --spinSleepTime $2 dist/$1; } && run",
     "test": "npm run build && run(){ node dist/$1; } && run"
@@ -14,20 +15,12 @@
   "dependencies": {
     "baseline": "^0.3.0",
     "binance-api-node": "^0.8.13",
-    "braintree-jsdoc-template": "^3.3.0",
     "docdash": "^1.0.1",
     "ethers": "^4.0.7",
     "express": "^4.16.4",
     "forever": "^0.15.3",
-    "ink-docstrap": "^1.3.2",
-    "jaguarjs-jsdoc": "^1.1.0",
-    "jsdoc3-bootstrap": "^0.15.0",
-    "minami": "^1.2.3",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
-    "toast-jsdoc": "^1.0.2",
-    "tui-jsdoc-template": "^1.2.2",
-    "ub-jsdoc": "^1.7.3",
     "ws": "^6.1.0"
   },
   "devDependencies": {
