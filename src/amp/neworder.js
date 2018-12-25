@@ -4,6 +4,17 @@ import deferred from '../utils/deferred'
 import {orderbook} from './orderbook'
 
 
+/**
+ * @memberof module:amp.sign
+ * @param {Object} order - order structure
+ * @param {Number|string} order.price - price
+ * @param {Number|string} order.amount - amount
+ * @param {string} order.side - "SELL" or "BUY"
+ * @param {string} order.baseTokenAddress - base token address
+ * @param {string} order.quoteTokenAddress - quote token address
+ * @instance
+ * @returns {Promise} promise to create order
+ */
 function neworder(order) { return msgNewOrder(order)
   .sign(this.wallet)
   .then( msg => {

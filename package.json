@@ -12,11 +12,21 @@
   "author": "Andrey",
   "license": "ISC",
   "dependencies": {
+    "baseline": "^0.3.0",
     "binance-api-node": "^0.8.13",
+    "braintree-jsdoc-template": "^3.3.0",
+    "docdash": "^1.0.1",
     "ethers": "^4.0.7",
     "forever": "^0.15.3",
+    "ink-docstrap": "^1.3.2",
+    "jaguarjs-jsdoc": "^1.1.0",
+    "jsdoc3-bootstrap": "^0.15.0",
+    "minami": "^1.2.3",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
+    "toast-jsdoc": "^1.0.2",
+    "tui-jsdoc-template": "^1.2.2",
+    "ub-jsdoc": "^1.7.3",
     "ws": "^6.1.0"
   },
   "devDependencies": {

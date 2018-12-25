@@ -7,6 +7,7 @@ import {createbooks} from './binance'
 
 const wallet = new Wallet(keys.AMPmaker)
 
+/** promisify delay*/
 const delay = tt => new Promise( (res,rej) => {
   setTimeout(_=>res(), tt*(0.8+0.4*Math.random()))
 })

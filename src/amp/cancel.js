@@ -3,7 +3,13 @@ import ws from '../connection/wsclient'
 import deferred from '../utils/deferred'
 import {orderbook} from './orderbook'
 
-
+/**
+ * cancels an order with specified hash
+ * @memberof module:amp.sign
+ * @param {string} hash
+ * @returns {Promise} promise to cancel the order
+ * @instance
+ */
 function cancel(hash) { return msgCancelOrder(hash)
   .sign(this.wallet)
   .then( msg => ws.send(JSON.stringify(msg)) )
@@ -20,6 +26,13 @@ function cancel(hash) { return msgCancelOrder(hash)
   })
 }
 
+/**
+ * cancels all orders for specified pair name, cancels all orders if name is undefined
+ * @memberof module:amp.sign
+ * @param {string} [pair=undefined] - pair name
+ * @returns {Promise} promise to cancel the orders
+ * @instance
+ */
 function cancelall(pair) { return this.myorders(pair)
   .map(ord => this.cancel(ord.hash))
 }

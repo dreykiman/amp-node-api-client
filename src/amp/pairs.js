@@ -1,7 +1,20 @@
 import rp from 'request-promise-native'
 
+/**
+ * Contains information about AMP server from {@link https://amp.exchange/api/tokens}.
+ * User should call {@link module:amp.updatePairs|updatePairs} at the beginning to fill this array.
+ * @type {Array.<Pair>}
+ * @member module:amp.pairs
+ */
 const pairs = []
 
+/**
+ * Fills array of {@link module:amp.pairs|pairs}.
+ * Should be called at the beginning.
+ * @see module:amp.pairs
+ * @returns {Promise} Promise representing the request to https://amp.exchange/api/pairs
+ * @memberof module:amp
+ */
 const updatePairs = _ => rp('https://amp.exchange/api/pairs', {json: true})
   .then( data => data.data )//.filter(ele => ele.quoteTokenSymbol === 'USDC' ) )
   .then( data => {
