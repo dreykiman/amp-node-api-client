@@ -1,3 +1,6 @@
+/**
+ * @module helpers
+ */
 import { utils } from 'ethers'
 
 export const round = (n, decimals = '2') => Math.round(n * Math.pow(10, decimals)) / Math.pow(10, decimals)
@@ -25,6 +28,12 @@ export const validator = {
   }
 }
 
+/**
+ * get pricepoints from prices
+ * @memberof module:helpers
+ * @function
+ * @alias module:helpers.getPricePoints
+ */
 export const getPricePoints = (price, quoteTokenDecimals) => {
   let precisionMultiplier = utils.bigNumberify(10).pow(9)
   let quoteMultiplier = utils.bigNumberify(10).pow(quoteTokenDecimals)
@@ -37,6 +46,12 @@ export const getPricePoints = (price, quoteTokenDecimals) => {
   return pricePoints
 }
 
+/**
+ * reverse pricepoints to prices
+ * @memberof module:helpers
+ * @function
+ * @alias module:helpers.reversePrice
+ */
 export const reversePrice = (pricepoint, quoteDec) => {
   let precisionMultiplier = 1e9
   let priceMultiplier = utils.bigNumberify(10).pow(18)
@@ -49,6 +64,12 @@ export const reversePrice = (pricepoint, quoteDec) => {
   return price
 }
 
+/**
+ * reverse amountpoints to amounts
+ * @memberof module:helpers
+ * @function
+ * @alias module:helpers.reverseAmount
+ */
 export const reverseAmount = (amount, baseDec) => {
   let precisionMultiplier = 1e9
   let baseMultiplier = utils.bigNumberify(10).pow(baseDec)
@@ -58,6 +79,12 @@ export const reverseAmount = (amount, baseDec) => {
   return amount.toString()/precisionMultiplier
 }
 
+/**
+ * shuffle array randomly
+ * @memberof module:helpers
+ * @function
+ * @alias module:helpers.shuffleArray
+ */
 export const shuffleArray = array => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -65,3 +92,14 @@ export const shuffleArray = array => {
   }
   return array
 }
+
+/**
+ * promisify delay
+ * @memberof module:helpers
+ * @function
+ * @alias module:helpers.delay
+ */
+export const delay = tt => new Promise( (res,rej) => {
+  setTimeout(_=>res(), tt)
+})
+

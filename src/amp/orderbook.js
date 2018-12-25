@@ -18,16 +18,16 @@ const accessor = {
 }
 
 /**
+ * dictionary of all orders on the market
  * @member module:amp.orderbook
  * @type {Object.<hash, Order>}
- * dictionary of all orders on the market
  */
 const orderbook = new Proxy({}, accessor )
 
 /**
+ * dictionary of promises to subsribe to ws stream
  * @member module:amp.subscriptions
  * @type {Object.<pairName, Promise>}
- * dictionary of promises to subsribe to ws stream
  */
 const subscriptions = {}
 

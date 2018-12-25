@@ -1,16 +1,11 @@
 import {Wallet, getDefaultProvider} from 'ethers'
 import * as amp from './amp'
 import keys from '../keys.json'
-import {shuffleArray,reversePrice} from './utils/helpers'
+import {delay, shuffleArray, reversePrice} from './utils/helpers'
 import ws from './connection/wsclient'
 import {createbooks} from './binance'
 
 const wallet = new Wallet(keys.AMPmaker)
-
-/** promisify delay*/
-const delay = tt => new Promise( (res,rej) => {
-  setTimeout(_=>res(), tt*(0.8+0.4*Math.random()))
-})
 
 const createOrders = payload => {
   let {pair:{pairName, baseTokenAddress, quoteTokenAddress}, bids, asks} = payload
@@ -40,11 +35,12 @@ const createOrders = payload => {
 
   return ords.reduce( (seq, ord) => {
     let {qty, price, side} = ord
+    let twait = 200*(0.8 + 0.4*Math.random())
     if (qty==undefined)
-      return seq.then(_=>delay(200)).then(_=>amp.sign(wallet).cancel(ord.hash))
+      return seq.then(_=>delay(twait)).then(_=>amp.sign(wallet).cancel(ord.hash))
 
     let order = {price, amount:qty, side, baseTokenAddress, quoteTokenAddress}
-    return seq.then(_=>delay(200)).then(_=>amp.sign(wallet).neworder(order))
+    return seq.then(_=>delay(twait)).then(_=>amp.sign(wallet).neworder(order))
   }, Promise.resolve()).catch(console.log)
 }
 

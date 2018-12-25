@@ -1,11 +1,20 @@
+/**
+ * @module binance
+ */
 import Binance from 'binance-api-node'
 import {reduce} from './reduce'
 import {makebook} from './makebook'
 
 const client = Binance()
 
-
-export const createbooks = pairs => {
+/**
+ * creates the lists of bids and asks for each pair in the supplied list by pulling the orderbook for each pair from Binance, and then calling {@link module:binance.reduce|reduce} and {@link module:binance.makebook|makebook} to create the list of bids and asks for AMP.
+ * Uses "TUSDETH" pair from Binace to scale ETH to DAI and USDC.
+ * @memberof module:binance
+ * @param {Array.<Pair>} pairs - list of pairs to build new market orders for
+ * @returns {Array.<Promise>} returns array of promises, where each promise returns the lists of new bid and ask amounts/prices based on pulled binance orderbook
+ */
+const createbooks = pairs => {
   let scaleUSD = client.book({ symbol: 'TUSDETH' })
     .then(reduce)
     .then( ({bid,ask}) => (bid+ask)/2 )
@@ -35,3 +44,5 @@ export const createbooks = pairs => {
       .then(scaleQuote)
   })
 }
+
+export {createbooks}

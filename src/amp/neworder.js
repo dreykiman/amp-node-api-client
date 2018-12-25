@@ -5,6 +5,7 @@ import {orderbook} from './orderbook'
 
 
 /**
+ * add new order
  * @memberof module:amp.sign
  * @param {Object} order - order structure
  * @param {Number|string} order.price - price
