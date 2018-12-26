@@ -13,7 +13,6 @@
   "author": "Andrey",
   "license": "ISC",
   "dependencies": {
-    "baseline": "^0.3.0",
     "binance-api-node": "^0.8.13",
     "docdash": "^1.0.1",
     "ethers": "^4.0.7",
