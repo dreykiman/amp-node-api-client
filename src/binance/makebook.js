@@ -13,7 +13,7 @@
 const makebook = ({bid,ask}) => {
   let average = (bid+ask)/2
 
-  let minSpread = 0.1
+  let minSpread = 0.08
 
   let bidStart = Math.min( (1-minSpread/2)*average, bid )
   let askStart = Math.max( (1+minSpread/2)*average, ask )
@@ -21,7 +21,7 @@ const makebook = ({bid,ask}) => {
   let minQuantityInQuote = 0.02
   if(average>100) minQuantityInQuote = 3
   let nOrders = 4
-  let depth = 0.2
+  let depth = 0.1
 
   let [bids,asks] = [bidStart, askStart].map( (start, ind) => {
     return [...Array(nOrders).keys()].map( iord => {

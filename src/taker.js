@@ -41,6 +41,12 @@ const takeall = _ => {
   return Promise.reject("no order found")
 }
 
+/**
+ * @function taker
+ * @desc
+ * * Randomly decides to buy or sell WETH/USDC pair.
+ * * Pulls the cheapest (most expensive) existing order and buys (sells) from it.
+ */
 Promise.all([amp.updateInfo(), amp.updatePairs(), amp.updateTokens()])
   .then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
   .then( arr => Promise.all(arr) )
