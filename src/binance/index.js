@@ -1,6 +1,7 @@
 /**
  * @module binance
  */
+import rp from 'request-promise-native'
 import Binance from 'binance-api-node'
 import {reduce} from './reduce'
 import {makebook} from './makebook'
@@ -25,9 +26,14 @@ const createbooks = pairs => {
     let [base, quote] = pairName.split('/')
     let symbol = base+'ETH'
 
+    let book = Promise.reject("Rejection that should never happen")
     let scaleQuote = data => data
+
     if (pairName==='DAI/WETH') symbol = 'TUSDETH'
     else if(pairName==='WETH/USDC') symbol = 'ETHUSDC'
+    else if(pairName==='MKR/WETH') symbol = 'mkreth'
+    else if(pairName==='MKR/USDC') symbol = 'mkrusd'
+    else if(pairName==='MKR/DAI') symbol = 'mkrusd'
     else if (quote==='USDC' || quote==='DAI') {
       symbol = base+'ETH'
       scaleQuote = ({pair, bids, asks}) => scaleUSD.then( scale => {
@@ -37,8 +43,10 @@ const createbooks = pairs => {
       })
     }
 
-    return client.book({symbol})
-      .then(reduce)
+    if (base==="MKR") book = rp('https://api.bitfinex.com/v1/book/'+symbol, { json: true })
+    else book = client.book({symbol})
+
+    return book.then(reduce)
       .then(makebook)
       .then(({bids, asks}) => ({pair, bids, asks}))
       .then(scaleQuote)

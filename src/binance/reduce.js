@@ -8,6 +8,7 @@
 const reduce = ({bids, asks}) => {
   let [bid, ask] = [bids, asks].map( prices => prices.reduce( (sum, ele) => {
     if (sum.sum<10) {
+      if (ele.quantity==undefined) ele.quantity = ele.amount
       sum.sum += ele.price*ele.quantity
       sum.qty += Number(ele.quantity)
     }
