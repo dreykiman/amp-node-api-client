@@ -3,7 +3,6 @@
  */
 import rp from 'request-promise-native'
 import Binance from 'binance-api-node'
-import {reduce} from './reduce'
 import {makebook} from './makebook'
 
 const client = Binance()
