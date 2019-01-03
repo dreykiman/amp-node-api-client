@@ -6,14 +6,14 @@
   "scripts": {
     "build": "babel src --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "gen-docs": "jsdoc src/ -d public/doc -c docdash.json -R README.md",
-    "www": "npm run build && forever start dist/www.js",
-    "start": "npm run build && run(){ forever start --minUptime 6000000 -l $1.forever.log --spinSleepTime $2 dist/$1; } && run",
-    "test": "npm run build && run(){ node dist/$1; } && run"
+    "start": "npm run build && run(){ slp=$2; fname=$1; shift 2; forever start --minUptime 6000000 -l $fname.forever.log --spinSleepTime $slp dist/$fname $*; } && run",
+    "test": "npm run build && run(){ fname=$1;shift;node dist/$fname $*; } && run"
   },
   "author": "Andrey",
   "license": "ISC",
   "dependencies": {
     "binance-api-node": "^0.8.13",
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
     "docdash": "^1.0.1",
     "ethers": "^4.0.7",
     "express": "^4.16.4",
