@@ -1,8 +1,8 @@
 import { validator } from '../utils/helpers'
 
 export default class msgTrades {
-  constructor() {
-    return new Proxy(this, validator)
+  constructor(pair) {
+    this.pair = new Proxy(pair, validator)
   }
 
   subscribe() {
@@ -11,9 +11,8 @@ export default class msgTrades {
       "event": {
         "type": "SUBSCRIBE",
         "payload": {
-          "baseToken": this.baseToken,
-          "quoteToken": this.quoteToken,
-          "name": this.baseTokenSymbol+"/"+this.quoteTokenSymbol,
+          "baseToken": this.pair.baseTokenAddress,
+          "quoteToken": this.pair.quoteTokenAddress,
         }
       }
     }
