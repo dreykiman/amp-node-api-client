@@ -1,6 +1,10 @@
+import rp from 'request-promise-native'
 import { spawn } from 'child_process'
 import Discord from 'discord.io'
 import auth from '../auth.json'
+import WebSocket from 'ws'
+import msgTrades from './messages/messageTrades'
+
 
 // Initialize Discord Bot
 var bot = new Discord.Client({
@@ -23,7 +27,7 @@ bot.on('message', (user, userID, to, message, evt) => {
     switch(cmd) {
       case 'take':
         console.log(cmd)
-        const taker = spawn( 'node', ['dist/taker'] )
+        const taker = spawn( 'node', ['dist/taker', ...args] )
         taker.stdout.on( 'data', msg => bot.sendMessage({to, message: '`'+msg+'`'}) )
         taker.on( 'close', _ => bot.sendMessage({to, message: ''}) )
         break;
@@ -32,6 +36,10 @@ bot.on('message', (user, userID, to, message, evt) => {
         const maker = spawn( 'node', ['dist/maker'] )
         maker.stdout.on( 'data', msg => bot.sendMessage({to, message: '`'+msg+'`'}) )
         maker.on( 'close', _ => bot.sendMessage({to, message: '================'}) )
+        break;
+      case 'help':
+        bot.sendMessage({to, message: '`!make - makes market, really long output of errors occurred during market making (e.g. not found pairs on cryptocompare, insufficient balance etc`'})
+        bot.sendMessage({to, message: '`!take [pairName, e.g. DAI/USDC] - takes specified pair (or WETH/USDC by default)`'})
         break;
     }
 
