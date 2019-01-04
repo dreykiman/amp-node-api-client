@@ -12,11 +12,12 @@
   "author": "Andrey",
   "license": "ISC",
   "dependencies": {
-    "binance-api-node": "^0.8.13",
     "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
     "docdash": "^1.0.1",
     "ethers": "^4.0.7",
     "express": "^4.16.4",
+    "firebase-admin": "^6.4.0",
+    "firestore": "^1.1.6",
     "forever": "^0.15.3",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
