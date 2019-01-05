@@ -1,7 +1,7 @@
 /**
  * creates the list of bids and asks for specified average bid/ask prices using internal parameters described below
- * @memberof module:binance
- * @alias module:binance.makebook
+ * @memberof module:marketmaker
+ * @alias module:marketmaker.makebook
  * @param {number} bid - average bid price
  * @param {number} ask - average ask price
  * @param {number} minqty - minimum order value
