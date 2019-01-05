@@ -36,7 +36,7 @@ function createOrders(payload) {
       return seq.then(_=>delay(twait)).then(_=>amp.sign(this.wallet).cancel(ord.hash))
 
     let order = {price, amount:qty, side, baseTokenAddress, quoteTokenAddress}
-    return seq.then(_=>delay(twait)).then(_=>amp.sign(this.wallet).neworder(order))
+    return seq.then(_=>delay(twait)).then(_=>amp.sign(this.wallet).neworder(order)).catch(console.log)
   }, Promise.resolve())
 }
 
