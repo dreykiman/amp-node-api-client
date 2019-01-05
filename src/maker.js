@@ -11,7 +11,7 @@ const wallet = new Wallet(keys.AMPmaker)
  * @function maker
  * @desc
  * 1. Initializes AMP pairs, tokens and info.
- * * Attempts to pull current orderbook for each pair from binance.
+ * * Attempts to pull current orderbook for each pair
  * * Calculates an average price of the pair bids and asks based on previous step
  * * Enforces mininum spread
  * * Creates certain number of bids and asks with certain depth

@@ -1,6 +1,6 @@
 import * as amp from '../amp'
 import {delay, shuffleArray, reversePrice} from '../utils/helpers'
-import {createbooks} from '../binance'
+import {createbooks} from '../marketmaker'
 
 
 function createOrders(payload) {
