@@ -44,7 +44,7 @@ const subscribe = (pair) => {
   }
 
   let {pairName} = pair
-  subscriptions[pairName] = new deferred(20000)
+  subscriptions[pairName] = new deferred(30000)
   ws.send(JSON.stringify(msgRawOrderbook.subscribe(ord)))
 
   return subscriptions[pairName].promise
