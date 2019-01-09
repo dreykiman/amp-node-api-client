@@ -3,7 +3,7 @@ import {delay, shuffleArray, reversePrice} from '../utils/helpers'
 import {createbooks} from '../marketmaker'
 
 
-function createOrders(payload) {
+function makeOrders(payload) {
   let {pair:{pairName, baseTokenAddress, quoteTokenAddress}, bids, asks} = payload
   let myords = amp.sign(this.wallet).myorders(pairName)
 
@@ -32,6 +32,7 @@ function createOrders(payload) {
   return ords.reduce( (seq, ord) => {
     let {qty, price, side} = ord
     let twait = 200*(0.8 + 0.4*Math.random())
+//    return Promise.resolve()
     if (qty==undefined)
       return seq.then(_=>delay(twait)).then(_=>amp.sign(this.wallet).cancel(ord.hash))
 
@@ -43,10 +44,11 @@ function createOrders(payload) {
 
 function makeall(pairs) {
   let books = createbooks(pairs)
-    .map(bk => bk.then(createOrders.bind(this)))
+    .map(bk => bk.then(makeOrders.bind(this)))
     .map(bk => bk.catch(msg => console.log({msg, src: 'maker'})))
 
   return Promise.all(books).then(_=>console.log('alldone'))
 }
+
 
 export {makeall}
