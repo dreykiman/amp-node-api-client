@@ -14,4 +14,7 @@ db.settings(settings);
 const prices = db.collection('maker').doc('prices').get()
   .then(doc => doc.exists ? doc.data() : {})
 
-export {prices}
+const getspreadmap = db.collection('maker').doc('spreads').get()
+  .then(doc => doc.exists ? doc.data() : {})
+
+export {getspreadmap, prices}
