@@ -36,6 +36,7 @@ td.asks {
         type="text/javascript">
 </script>
 
+<script src="/big.min.js"></script>
 <script src="/utils.js"></script>
 
 <script>
@@ -126,7 +127,11 @@ function onload() {
 
         console.log(JSON.stringify(data))
 
-        if(data.asks!=null && data.bids!=null) {
+        if(data.asks.length>0 && data.bids.length>0) {
+          const bid = Big(data.bids[data.bids.length-1].pricepoint)
+          const ask = Big(data.asks[0].pricepoint)
+          const spread = ask.minus(bid).div(ask).times(100).toFixed(2);
+
           ["bids", "asks"].forEach( function(name, icell) {
             let pair = data.pairName
 
@@ -151,7 +156,7 @@ function onload() {
               })
               .join("<br>")
 
-            rows[pair].cells[icell].innerHTML = '<b>total: '+tot.toFixed(6)+'<sup>'+quoteSym+'</sup></b><br>'+line
+            rows[pair].cells[icell].innerHTML = '<b>total: '+tot.toFixed(6)+'<sup>'+quoteSym+'</sup>, spread: '+spread+'</b><br>'+line
           })
 
         }
