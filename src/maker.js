@@ -19,12 +19,15 @@ const wallet = new Wallet(keys.AMPmaker)
  *    * special procedure to avoid empty market and new/old orders overlaps, i.e. buying from itself
  *    * separates orders by small delay [160, 240] msec to avoid ws server hammering
  */
+
+ws.onopen = () => {
 Promise.all([amp.updateInfo(), amp.updatePairs(), amp.updateTokens()])
   .then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
   .then( arr => Promise.all(arr) )
-  .then( _ => trader(wallet).makeall(amp.pairs.slice(0.20)) )
-  .catch(msg => console.log({err: msg.toString()}))
+//  .then( _ => Promise.all(amp.sign(wallet).cancelall()))
+  .then( _ => trader(wallet).makeall(amp.pairs.slice(0,20)))
+  .catch(msg => console.log({err: msg}))
   .then(_=>ws.close())
- 
+}
 
 
