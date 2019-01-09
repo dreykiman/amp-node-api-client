@@ -15,7 +15,6 @@ function reverseAmount(amount, baseDec) {
   let baseMultiplier = ethers.utils.bigNumberify(10).pow(baseDec)
   amount = ethers.utils.bigNumberify(amount)
   amount = amount.mul(precisionMultiplier).div(baseMultiplier)
-console.log(baseDec)
 
   return amount.toString()/precisionMultiplier
 }

@@ -61,7 +61,6 @@ th, td {
 
 <script>
 
-var decimals = {}
 function onload() {
   let pairreq = new XMLHttpRequest()
 
@@ -70,7 +69,8 @@ function onload() {
       let tbl = document.getElementById("feed")
 
       let data = JSON.parse(this.responseText)
-      decimals = data.reduce( function(decs, pair) {
+
+      const decimals = data.reduce( function(decs, pair) {
         decs[pair.baseTokenSymbol] = pair.baseTokenDecimals
         decs[pair.quoteTokenSymbol] = pair.quoteTokenDecimals
         return decs

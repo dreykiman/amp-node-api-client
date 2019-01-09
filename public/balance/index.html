@@ -1,0 +1,112 @@
+<html>
+<head>
+<title>Balance</title>
+
+<link rel="stylesheet" type="text/css" href="/dots.css">
+
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+<style>
+
+body {
+  font-family: 'Roboto';font-size: 22px;
+}
+
+table {
+  table-layout: fixed;
+}
+
+table td, th {
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.hidden {
+  display: none;
+}
+
+</style>
+
+<script src='/utils.js'></script>
+<script src='/big.min.js'></script>
+
+<script>
+
+function onload() {
+  const addr = '0xc10944d249b6dead951669786D8Ffe1C8B35bbfe'
+  const getorders = fetch('https://amp.exchange/api/orders/positions?address='+addr)
+    .then( response => response.json() )
+    .then( ords => ords.data.filter(ele => ele.status!='CANCELLED' && ele.status!='FILLED' && ele.status!='INVALIDATED') )
+
+  const getbalances = fetch('http://api.ethplorer.io/getAddressInfo/'+addr+'?apiKey=freekey')
+    .then( response => response.json() )
+    .then( balances => balances.tokens )
+
+  const gettokens = fetch('https://amp.exchange/api/tokens')
+    .then( response => response.json() )
+    .then( tokens => tokens.data )
+
+  const bals = {}, decs = {}, invest = {}
+
+  Promise.all([gettokens, getorders, getbalances])
+    .then( ([tokens, orders, balances]) => {
+      document.getElementById("loadinglabel").classList.add('hidden')
+
+      tokens.forEach(tkn=>{
+        decs[tkn.symbol] = Big(10).pow(Number(tkn.decimals))
+        invest[tkn.symbol] = Big(0)
+        bals[tkn.symbol] = Big(0)
+      })
+
+      balances.forEach(bal=> {
+        const sym = bal.tokenInfo.symbol
+        decs[sym] = Big(10).pow(Number(bal.tokenInfo.decimals))
+        bals[sym] = Big(bal.balance).div(decs[sym])
+      })
+
+      orders.forEach(ord=> {
+        const [base, quote] = ord.pairName.split('/')
+
+        if(ord.side==='BUY') {
+          const am = Big(ord.amount).div(decs[base])
+          invest[quote] = invest[quote].plus( Big(ord.pricepoint).times(am).div(Big(10).pow(18)).div(decs[quote]) )
+        } else
+          invest[base] = invest[base].plus( Big(ord.amount).div(decs[base]) )
+
+      })
+
+      tokens.filter(tkn => bals[tkn.symbol].gt(0)).forEach(tkn => {
+        const sym = tkn.symbol
+        const row = document.getElementById("feed").insertRow()
+
+        const frac = invest[sym].div(bals[sym]).times(100).toFixed(2)
+
+        row.insertCell().innerHTML = sym
+        row.insertCell().innerHTML = bals[sym].toFixed(2)
+        row.insertCell().innerHTML = invest[sym].toFixed(2)
+        row.insertCell().innerHTML = frac+'%'
+      })
+    }).catch( msg => alert(msg) )
+}
+
+</script>
+
+</head>
+
+<body onload=onload()>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Balance</th>
+<th>In use on market</th>
+<th>Fraction</th>
+</tr>
+</thead>
+<tbody id=feed>
+</tbody>
+</table>
+<h3 id=loadinglabel><p class="saving"><span>LOADING</span><span>.</span><span>.</span><span>.</span></p><h3>
+</body>
+</html>
