@@ -63,6 +63,7 @@ function onload() {
 
       ws.onmessage = ev => {
         let data = JSON.parse(ev.data)
+        console.log(data)
         if(data.channel == "trades" && data.event && data.event.payload){
           data = data.event.payload
 
