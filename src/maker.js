@@ -25,9 +25,9 @@ if (confname==='rinkeby')
  */
 
 getconfig(confname)
-  .then( ({wsaddress, ampurl}) => Promise.resolve()
+  .then( ({wsaddress, ampurl, whitelist}) => Promise.resolve()
     .then( _ => connectWS(wsaddress) )
-    .then( _ => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) )
+    .then( _ => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl, whitelist), amp.updateTokens(ampurl)]) )
   ).then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
   .then( arr => Promise.all(arr) )
 //  .then( _ => Promise.all(amp.sign(wallet).cancelall()))
