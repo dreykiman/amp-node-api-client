@@ -15,7 +15,7 @@ const pairs = []
  * @returns {Promise} Promise representing the request to https://amp.exchange/api/pairs
  * @memberof module:amp
  */
-const updatePairs = _ => rp('https://amp.exchange/api/pairs', {json: true})
+const updatePairs = ampurl => rp(ampurl + '/api/pairs', {json: true})
   .then( data => data.data )//.filter(ele => ele.quoteTokenSymbol === 'USDC' ) )
   .then( data => {
     data.forEach( ele => {

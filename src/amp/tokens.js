@@ -15,7 +15,7 @@ const tokens = []
  * @returns {Promise} Promise representing the request to https://amp.exchange/api/tokens
  * @memberof module:amp
  */
-const updateTokens = _ => rp('https://amp.exchange/api/tokens', {json: true})
+const updateTokens = ampurl => rp(ampurl + '/api/tokens', {json: true})
   .then( data => data.data )//.filter(ele => ele.quoteTokenSymbol === 'USDC' ) )
   .then( data => {
     data.forEach( ele => {

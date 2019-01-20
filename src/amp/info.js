@@ -15,7 +15,7 @@ const info = { makeFee: {}, takeFee: {} }
  * @returns {Promise} Promise representing the request to https://amp.exchange/api/info
  * @memberof module:amp
  */
-const updateInfo = _ => rp('https://amp.exchange/api/info', {json: true})
+const updateInfo = ampurl => rp(ampurl + '/api/info', {json: true})
   .then( data => data.data )
   .then( data => {
     info.exchangeAddress = data.exchangeAddress
