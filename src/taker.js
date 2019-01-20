@@ -24,7 +24,8 @@ getconfig(confname)
     .then( _ => rp('https://ethgasstation.info/json/ethgasAPI.json', {json:true}))
     .then( ({average}) => {
       average /= 10
-      return average>gasMax ? Promise.reject(`gas price: ${average}>${gasMax}`) : Promise.resolve()
+      if (gasMax && average>gasMax) Promise.reject(`gas price: ${average}>${gasMax}`)
+      return Promise.resolve()
     }).then( _ => connectWS(wsaddress) )
     .then( _ => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) )
   ).then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
