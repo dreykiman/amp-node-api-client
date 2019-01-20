@@ -1,5 +1,5 @@
 import rp from 'request-promise-native'
-import {prices as flats} from '../datastore/firedata'
+import {getprices} from '../datastore/firedata'
 
 /**
  * determine prices for tokens using cryptocompare, firebase database and logic
@@ -22,7 +22,7 @@ const getpricelist = pairs => {
 
   let book = rp("https://min-api.cryptocompare.com/data/pricemulti?fsyms="+fsyms+"&tsyms="+tsyms, { json: true })
   const flatprices = rp("https://min-api.cryptocompare.com/data/pricemulti?fsyms=ETH,DAI&tsyms=USDC", {json:true})
-    .then(scl => flats.then(flt => {
+    .then(scl => getprices.then(flt => {
       return Object.keys(flt).reduce( (coll, pairName) => {
         const [base,quote] = pairName.split('/')
         coll[base] = { 'USDC': flt[pairName],

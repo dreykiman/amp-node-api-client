@@ -11,10 +11,10 @@ admin.initializeApp({
 const db = admin.firestore()
 db.settings(settings);
 
-const prices = db.collection('maker').doc('prices').get()
+const getprices = db.collection('maker').doc('prices').get()
   .then(doc => doc.exists ? doc.data() : {})
 
 const getspreadmap = db.collection('maker').doc('spreads').get()
   .then(doc => doc.exists ? doc.data() : {})
 
-export {getspreadmap, prices}
+export {getspreadmap, getprices}
