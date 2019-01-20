@@ -102,7 +102,7 @@ function onload() {
       data.forEach( ele => {
           let pairName = ele.baseTokenSymbol+"/"+ele.quoteTokenSymbol
 
-          ws.addEventListener("open", _ => {
+          setTimeout(_ => ws.addEventListener("open", _ => {
             ws.send(JSON.stringify({
               "channel": "trades",
               "event": {
@@ -113,7 +113,7 @@ function onload() {
                 }
               }
             }))
-          })
+          }), Math.random()*3)
        })
     })
 }

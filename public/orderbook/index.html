@@ -125,7 +125,7 @@ function onload() {
 
           ob[pairName] = {asks: {}, bids: {}}
 
-          ws.addEventListener("open", _ => { ws.send(JSON.stringify({
+          setTimeout(_ => ws.addEventListener("open", _ => { ws.send(JSON.stringify({
             "channel": "orderbook",
             "event": {
               "type": "SUBSCRIBE",
@@ -134,7 +134,7 @@ function onload() {
                 "quoteToken": ele.quoteTokenAddress,
               }
             }
-          }))})
+          }))}), Math.random()*3)
      })
     })
 }
