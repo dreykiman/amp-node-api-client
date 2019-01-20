@@ -1,5 +1,5 @@
 export default class {
-  constructor (timeOut) {
+  constructor (timeOut, id) {
     this.promise = new Promise ( (res, rej) => {
       this.resolve = res
       this.reject = rej
@@ -7,7 +7,7 @@ export default class {
 
     if (timeOut != null) {
       setTimeout( _=> {
-        this.reject( {err: "rejected due to expiration timer"} )
+        this.reject( {err: "rejected due to expiration timer", id} )
       }, timeOut )
     }
   }
