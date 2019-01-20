@@ -2,9 +2,14 @@ import {Wallet, getDefaultProvider} from 'ethers'
 import * as amp from './amp'
 import {trader} from './trader'
 import keys from '../keys.json'
-import ws from './connection/wsclient'
+import {connectWS} from './connection/wsclient'
+import {getconfig} from './datastore/firedata'
 
-const wallet = new Wallet(keys.AMPtaker)
+const confname = process.argv.find(ele=>ele==='rinkeby') || 'default'
+
+let wallet = new Wallet(keys.AMPtaker)
+if (confname==='rinkeby')
+  wallet = new Wallet(keys.rinkebyAMPtaker)
 
 /**
  * @function taker
@@ -12,12 +17,16 @@ const wallet = new Wallet(keys.AMPtaker)
  * * Randomly decides to buy or sell WETH/USDC pair.
  * * Pulls the cheapest (most expensive) existing order and buys (sells) from it.
  */
-ws.onopen = () => {
-Promise.all([amp.updateInfo(), amp.updatePairs(), amp.updateTokens()])
+
+getconfig(confname).then( ({wsaddress, ampurl}) => {
+    connectWS(wsaddress)
+    return ampurl
+  }).then( ampurl => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) )
   .then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
   .then( arr => Promise.all(arr) )
-  .then( _ => trader(wallet).takeone(process.argv[2]||"WETH/USDC") )
+  // find if valid pairName was passed as argument
+  .then( _ => amp.pairs.find(({pairName}) => process.argv.includes(pairName)) || {pairName: 'WETH/USDC'} )
+  .then( ({pairName}) => trader(wallet).takeone(pairName) )
   .catch(msg => console.log({err: JSON.stringify(msg), src: 'taker.js'}))
-  .then(_=>ws.close())
-}
+  .then(_=>process.exit())
 
