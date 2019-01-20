@@ -5,6 +5,7 @@ import {trader} from './trader'
 import keys from '../keys.json'
 import {connectWS} from './connection/wsclient'
 import {getconfig} from './datastore/firedata'
+import {delay} from './utils/helpers'
 
 const confname = process.argv.find(ele=>ele==='rinkeby') || 'default'
 
@@ -24,11 +25,11 @@ getconfig(confname)
     .then( _ => rp('https://ethgasstation.info/json/ethgasAPI.json', {json:true}))
     .then( ({average}) => {
       average /= 10
-      if (gasMax && average>gasMax) Promise.reject(`gas price: ${average}>${gasMax}`)
+      if (gasMax && average>gasMax) return Promise.reject(`gas price: ${average}>${gasMax}`)
       return Promise.resolve()
     }).then( _ => connectWS(wsaddress) )
     .then( _ => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) )
-  ).then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
+  ).then( _ => amp.pairs.map(pair => delay(Math.random()*5000).then(_=>amp.subscribe(pair))) )
   .then( arr => Promise.all(arr) )
   // find if valid pairName was passed as argument
   .then( _ => amp.pairs.find(({pairName}) => process.argv.includes(pairName)) || {pairName: 'WETH/USDC'} )

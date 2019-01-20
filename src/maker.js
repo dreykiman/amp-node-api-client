@@ -4,6 +4,7 @@ import {trader} from './trader'
 import keys from '../keys.json'
 import {connectWS} from './connection/wsclient'
 import {getconfig} from './datastore/firedata'
+import {delay} from './utils/helpers'
 
 const confname = process.argv.find(ele=>ele==='rinkeby') || 'default'
 
@@ -28,7 +29,7 @@ getconfig(confname)
   .then( ({wsaddress, ampurl, whitelist}) => Promise.resolve()
     .then( _ => connectWS(wsaddress) )
     .then( _ => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl, whitelist), amp.updateTokens(ampurl)]) )
-  ).then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
+  ).then( _ => amp.pairs.map(pair => delay(Math.random()*5000).then(_=>amp.subscribe(pair))) )
   .then( arr => Promise.all(arr) )
 //  .then( _ => Promise.all(amp.sign(wallet).cancelall()))
   .then( _ => trader(wallet).makeall(amp.pairs.slice(0,20)))
