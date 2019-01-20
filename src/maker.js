@@ -2,10 +2,14 @@ import {Wallet, getDefaultProvider} from 'ethers'
 import * as amp from './amp'
 import {trader} from './trader'
 import keys from '../keys.json'
-import ws from './connection/wsclient'
+import {connectWS} from './connection/wsclient'
+import {getconfig} from './datastore/firedata'
 
-const wallet = new Wallet(keys.AMPmaker)
+const confname = process.argv.find(ele=>ele==='rinkeby') || 'default'
 
+let wallet = new Wallet(keys.AMPmaker)
+if (confname==='rinkeby')
+  wallet = new Wallet(keys.rinkebyAMPmaker)
 
 /**
  * @function maker
@@ -20,14 +24,14 @@ const wallet = new Wallet(keys.AMPmaker)
  *    * separates orders by small delay [160, 240] msec to avoid ws server hammering
  */
 
-ws.onopen = () => {
-Promise.all([amp.updateInfo(), amp.updatePairs(), amp.updateTokens()])
+getconfig(confname).then( ({wsaddress, ampurl}) => {
+    connectWS(wsaddress)
+    return ampurl
+  }).then( ampurl => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) )
   .then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
   .then( arr => Promise.all(arr) )
 //  .then( _ => Promise.all(amp.sign(wallet).cancelall()))
   .then( _ => trader(wallet).makeall(amp.pairs.slice(0,20)))
   .catch(msg => console.log({err: msg}))
-  .then(_=>ws.close())
-}
-
+  .then(_=>process.exit())
 
