@@ -41,79 +41,24 @@ td.asks {
 
 <script>
 
-let btn0 = document.createElement("button")
-btn0.innerHTML= "POPULATE"
-
 let rows = {}
-
 let decimals = {}
 
-function populate() {
-    let popget = new XMLHttpRequest()
-
-    this.innerHTML = "POPULATING..."
-    this.disabled = true
-
-    popget.onreadystatechange = function() {
-      if (this.readyState == 4) {
-        btn0.innerHTML = "POPULATE AGAIN"
-        btn0.disabled = false
-
-/*
-        let data = JSON.parse(this.responseText)
-        data.forEach( ele => {
-          let pairName;
-          if ('pair' in ele && 'err' in ele) {
-            pairName = `${ele.pair.baseTokenSymbol}/${ele.pair.quoteTokenSymbol}`
-            rows[pairName].cells[2].innerHTML = ele.err
-          } else {
-            let ords = ele.map( ord => {
-              if (ord.event.payload) {
-                let pld = ord.event.payload
-                pairName = pld.pairName
-                if (pld.status=="CANCELLED")
-                  return `<del>${pld.side} ${pld.pricepoint} ${pld.amount}</del>`
-                return `${pld.side} ${pld.pricepoint} ${pld.amount}`
-              } else console.log(ord.toString())
-            })
-*/
-/*
-            if(pairName==null) console.log(ords)
-            else {
-              ['BUY', 'SELL'].forEach( (name, ind) => {
-                rows[pairName].cells[2+ind].innerHTML = ords.filter(ele=>ele.includes(name)).join("<br>")
-              })
-            }
-*/
-//          }
-///        })
-      }
-    }
-
-    popget.open("GET", "/api/populate")
-    popget.send()
-}
-
 function onload() {
-  btn0.onclick = populate
+  let url = 'https://amp.exchange/api/pairs'
+  let wsaddr = 'wss://amp.exchange/socket'
 
-  var btn1 = document.createElement("button")
-  btn1.innerHTML= "CANCEL ALL"
-
-  btn1.onclick = function() {
-    let popget = new XMLHttpRequest()
-    popget.open("GET", "/api/cancelall")
-    popget.send()
+  if(window.location.search.indexOf('rinkeby')>=0) {
+    url = 'https://rinkeby.amp.exchange/api/pairs'
+    wsaddr = 'wss://rinkeby.amp.exchange/socket'
   }
 
-  let pairreq = new XMLHttpRequest()
-
-  pairreq.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
+  fetch(url)
+    .then(data => data.json())
+    .then(data => data.data)
+    .then(data => {
       let tbl = document.createElement("table")
       document.body.appendChild(tbl)
-
-      let data = JSON.parse(this.responseText)
 
       let ws = new WebSocket(wsaddr)
       var ob = {}
@@ -177,7 +122,6 @@ function onload() {
           rows[pairName].insertCell().className = 'bids'
           rows[pairName].insertCell().className = 'asks'
           rows[pairName].insertCell().className = 'debug'
-          rows[pairName].insertCell().className = 'debug'
 
           ob[pairName] = {asks: {}, bids: {}}
 
@@ -192,11 +136,7 @@ function onload() {
             }
           }))})
      })
-    }
-  }
-
-  pairreq.open("GET", "/api/pairs")
-  pairreq.send()
+    })
 }
 
 </script>

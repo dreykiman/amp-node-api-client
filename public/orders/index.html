@@ -62,13 +62,19 @@ th, td {
 <script>
 
 function onload() {
-  let pairreq = new XMLHttpRequest()
+  let url = 'https://amp.exchange/api/pairs'
+  let wsaddr = 'wss://amp.exchange/socket'
 
-  pairreq.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
+  if(window.location.search.indexOf('rinkeby')>=0) {
+    url = 'https://rinkeby.amp.exchange/api/pairs'
+    wsaddr = 'wss://rinkeby.amp.exchange/socket'
+  }
+
+  fetch(url)
+    .then(data => data.json())
+    .then(data => data.data)
+    .then(data => {
       let tbl = document.getElementById("feed")
-
-      let data = JSON.parse(this.responseText)
 
       const decimals = data.reduce( function(decs, pair) {
         decs[pair.baseTokenSymbol] = pair.baseTokenDecimals
@@ -142,11 +148,7 @@ function onload() {
             }))
           })
        })
-    }
-  }
-
-  pairreq.open("GET", "/api/pairs")
-  pairreq.send()
+    })
 }
 
 </script>

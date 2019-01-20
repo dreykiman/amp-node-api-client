@@ -19,5 +19,3 @@ function reverseAmount(amount, baseDec) {
   return amount.toString()/precisionMultiplier
 }
 
-var wsaddr = "ws://ampapi:8081/socket"
-var wsaddr = "wss://amp.exchange/socket"
