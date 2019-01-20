@@ -68,9 +68,9 @@ function onload() {
 
       ws.onmessage = ev => {
         let data = JSON.parse(ev.data)
-        data = data.event && data.event.payload
+        console.log(data)
 
-        console.log(JSON.stringify(data))
+        data = data.event && data.event.payload
 
         if(data.asks.length>0 && data.bids.length>0) {
           const bid = Big(data.bids[data.bids.length-1].pricepoint)

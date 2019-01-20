@@ -91,6 +91,7 @@ function onload() {
       ws.onmessage = ev => {
         let data = JSON.parse(ev.data)
         console.log(data)
+
         if(data.channel && data.channel == "raw_orderbook" && data.event && data.event.payload){
           let pair, isINIT = false
           if (data.event.type==="INIT"){
