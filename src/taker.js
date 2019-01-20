@@ -19,11 +19,15 @@ if (confname==='rinkeby')
  * * Pulls the cheapest (most expensive) existing order and buys (sells) from it.
  */
 
-
-getconfig(confname).then( ({wsaddress, ampurl}) => Promise.resolve()
-    .then( _ => connectWS(wsaddress) )
-    .then( _ => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) ))
-  .then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
+getconfig(confname)
+  .then( ({wsaddress, ampurl, gasMax}) => Promise.resolve()
+    .then( _ => rp('https://ethgasstation.info/json/ethgasAPI.json', {json:true}))
+    .then( ({average}) => {
+      average /= 10
+      return average>gasMax ? Promise.reject(`gas price: ${average}>${gasMax}`) : Promise.resolve()
+    }).then( _ => connectWS(wsaddress) )
+    .then( _ => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) )
+  ).then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
   .then( arr => Promise.all(arr) )
   // find if valid pairName was passed as argument
   .then( _ => amp.pairs.find(({pairName}) => process.argv.includes(pairName)) || {pairName: 'WETH/USDC'} )
