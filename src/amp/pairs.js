@@ -20,7 +20,7 @@ const updatePairs = ampurl => rp(ampurl + '/api/pairs', {json: true})
   .then( data => {
     data.forEach( ele => {
       ele.pairName = `${ele.baseTokenSymbol}/${ele.quoteTokenSymbol}`
-      pairs.push(ele)
+      if(ele.listed) pairs.push(ele)
     })
   }).catch(msg => {
     console.log("can not access AMP REST API server")
