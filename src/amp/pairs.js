@@ -20,7 +20,7 @@ const updatePairs = (ampurl, whitelist) => rp(ampurl + '/api/pairs', {json: true
   .then( data => {
     data.forEach( ele => {
       ele.pairName = `${ele.baseTokenSymbol}/${ele.quoteTokenSymbol}`
-      if(ele.listed && (!whitelist || whitelist.includes(ele.baseTokenSymbol))) pairs.push(ele)
+      if(ele.listed && (whitelist==undefined || whitelist.includes(ele.baseTokenSymbol))) pairs.push(ele)
     })
   }).catch(msg => {
     console.log("can not access AMP REST API server")
