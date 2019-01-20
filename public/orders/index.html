@@ -47,7 +47,6 @@ tr.pairName td {
 th, td {
   text-align: left;
   vertical-align: text-top;
-  padding: 0.3em;
 }
 
 </style>
@@ -126,8 +125,10 @@ function onload() {
               row.insertCell().innerHTML = filled+"% / "+ord.amount
               row.insertCell().innerHTML = ord.price
               row.insertCell().innerHTML = ord.status
-              row.insertCell().innerHTML = ord.userAddress
-              row.insertCell().innerHTML = ord.hash
+              if(window.location.search.indexOf('verbose')>=0) {
+                row.insertCell().innerHTML = ord.userAddress
+                row.insertCell().innerHTML = ord.hash
+              }
               row.insertCell().innerHTML = new Date(ord.createdAt)
             })
           }
