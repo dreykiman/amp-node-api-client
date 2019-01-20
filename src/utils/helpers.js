@@ -100,6 +100,6 @@ export const shuffleArray = array => {
  * @alias module:helpers.delay
  */
 export const delay = tt => new Promise( (res,rej) => {
-  setTimeout(_=>res(), tt)
+  setTimeout(_=>res(tt), tt)
 })
 
