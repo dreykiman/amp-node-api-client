@@ -1,5 +1,5 @@
 import deferred from '../utils/deferred'
-import ws from '../connection/wsclient'
+import {ws} from '../connection/wsclient'
 import msgRawOrderbook from '../messages/messageRawOrderbook'
 
 const accessor = {

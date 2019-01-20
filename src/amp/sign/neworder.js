@@ -1,5 +1,5 @@
 import msgNewOrder from '../../messages/messageNewOrder'
-import ws from '../../connection/wsclient'
+import {ws} from '../../connection/wsclient'
 import deferred from '../../utils/deferred'
 import {orderbook} from '../orderbook'
 
