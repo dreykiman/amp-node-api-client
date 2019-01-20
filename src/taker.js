@@ -1,4 +1,5 @@
 import {Wallet, getDefaultProvider} from 'ethers'
+import rp from 'request-promise-native'
 import * as amp from './amp'
 import {trader} from './trader'
 import keys from '../keys.json'
@@ -18,10 +19,10 @@ if (confname==='rinkeby')
  * * Pulls the cheapest (most expensive) existing order and buys (sells) from it.
  */
 
-getconfig(confname).then( ({wsaddress, ampurl}) => {
-    connectWS(wsaddress)
-    return ampurl
-  }).then( ampurl => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) )
+
+getconfig(confname).then( ({wsaddress, ampurl}) => Promise.resolve()
+    .then( _ => connectWS(wsaddress) )
+    .then( _ => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) ))
   .then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
   .then( arr => Promise.all(arr) )
   // find if valid pairName was passed as argument

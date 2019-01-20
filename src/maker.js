@@ -24,10 +24,9 @@ if (confname==='rinkeby')
  *    * separates orders by small delay [160, 240] msec to avoid ws server hammering
  */
 
-getconfig(confname).then( ({wsaddress, ampurl}) => {
-    connectWS(wsaddress)
-    return ampurl
-  }).then( ampurl => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) )
+getconfig(confname).then( ({wsaddress, ampurl}) => Promise.resolve()
+    .then( _ => connectWS(wsaddress) )
+    .then( _ => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) ))
   .then( _ => amp.pairs.map(pair => amp.subscribe(pair)) )
   .then( arr => Promise.all(arr) )
 //  .then( _ => Promise.all(amp.sign(wallet).cancelall()))
