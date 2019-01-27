@@ -3,7 +3,7 @@ import messageListener from './listener'
 
 let ws
 
-const connectWS = url => {
+const startWSclient = url => {
   ws = new WebSocket(url)
 
   ws.onmessage = messageListener
@@ -34,4 +34,4 @@ process.on('SIGINT', () => {
   process.exit()
 })
 
-export {connectWS, ws}
+export {startWSclient, ws}
