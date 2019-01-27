@@ -17,10 +17,13 @@ const what2take = (confname) => db.collection('config').doc(confname).collection
 const getconfig = (confname) => db.collection('config').doc(confname).get()
     .then(doc => doc.exists ? doc.data() : {})
 
-const getprices = db.collection('maker').doc('prices').get()
+const getprices = () => db.collection('maker').doc('prices').get()
   .then(doc => doc.exists ? doc.data() : {})
 
-const getspreadmap = db.collection('maker').doc('spreads').get()
+const getspreadmap = () => db.collection('maker').doc('spreads').get()
   .then(doc => doc.exists ? doc.data() : {})
 
-export {getspreadmap, getprices, getconfig, what2take}
+const getmakerconf = () => db.collection('maker').doc('config').get()
+  .then(doc => doc.exists ? doc.data() : {})
+
+export {getspreadmap, getprices, getconfig, what2take, getmakerconf}
