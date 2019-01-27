@@ -1,3 +1,5 @@
+import {getmakerconf} from '../datastore/firedata'
+
 /**
  * creates the list of bids and asks for specified average bid/ask prices using internal parameters described below
  * @memberof module:marketmaker
@@ -15,24 +17,22 @@ const makebook = ({bid,ask,minqty,spread}) => {
   let bidStart = Math.min( (1-spread/2)*average, bid )
   let askStart = Math.max( (1+spread/2)*average, ask )
 
-  let nOrders = 4
-  let depth = 0.1
+  return getmakerconf().then( ({nOrders, depth}) => {
+    let [bids,asks] = [bidStart, askStart].map( (start, ind) => {
+      return [...Array(nOrders).keys()].map( iord => {
+        let qty = 1 + (iord*iord)/5
+        qty *= (1+Math.random()*0.3)*minqty/average
 
-  let [bids,asks] = [bidStart, askStart].map( (start, ind) => {
-    return [...Array(nOrders).keys()].map( iord => {
-      let qty = 1 + (iord*iord)/5
-      qty *= (1+Math.random()*0.3)*minqty/average
+        let ieff = iord + 0.3*Math.random()
+        let step = ieff * depth/nOrders
+        step = ind===0 ? -step : step
+        let price = (1 + step)*start
 
-      let ieff = iord + 0.3*Math.random()
-      let step = ieff * depth/nOrders
-      step = ind===0 ? -step : step
-      let price = (1 + step)*start
-
-      return {qty, price}
+        return {qty, price}
+      })
     })
+    return {bids,asks}
   })
-
-  return {bids,asks}
 }
 
 export {makebook}
