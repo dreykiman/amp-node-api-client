@@ -22,7 +22,7 @@ const getpricelist = pairs => {
 
   let book = rp("https://min-api.cryptocompare.com/data/pricemulti?fsyms="+fsyms+"&tsyms="+tsyms, { json: true })
   const flatprices = rp("https://min-api.cryptocompare.com/data/pricemulti?fsyms=ETH,DAI&tsyms=USDC", {json:true})
-    .then(scl => getprices.then(flt => {
+    .then(scl => getprices().then(flt => {
       return Object.keys(flt).reduce( (coll, pairName) => {
         const [base,quote] = pairName.split('/')
         coll[base] = { 'USDC': flt[pairName],

@@ -26,7 +26,7 @@ const createbooks = pairs => {
     quote = quote==='WETH' ? 'ETH' : quote
 
     const getprice = pricelist.then(data => data[base][quote])
-    const getspread = getspreadmap.then(sprds => sprds[pairName] || sprds.default)
+    const getspread = getspreadmap().then(sprds => sprds[pairName] || sprds.default)
 
     return Promise.all([getprice, getspread])
       .then( ([price,spread]) => ({bid:price, ask:price, minqty, spread}))
