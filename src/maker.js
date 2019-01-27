@@ -2,7 +2,7 @@ import {Wallet, getDefaultProvider} from 'ethers'
 import * as amp from './amp'
 import {trader} from './trader'
 import keys from '../keys.json'
-import {connectWS} from './connection/wsclient'
+import {startWSclient} from './connection/wsclient'
 import {getconfig} from './datastore/firedata'
 import {delay} from './utils/helpers'
 
@@ -25,14 +25,17 @@ if (confname==='rinkeby')
  *    * separates orders by small delay [160, 240] msec to avoid ws server hammering
  */
 
-getconfig(confname)
-  .then( ({wsaddress, ampurl, whitelist}) => Promise.resolve()
-    .then( _ => connectWS(wsaddress) )
-    .then( _ => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl, whitelist), amp.updateTokens(ampurl)]) )
-  ).then( _ => amp.pairs.map(pair => delay(Math.random()*5000).then(_=>amp.subscribe(pair))) )
+let config = getconfig(confname)
+
+config
+  .then( ({wsaddress, ampurl}) => startWSclient(wsaddress).then( _=> ampurl ))
+  .then( ampurl => Promise.all([amp.updateInfo(ampurl), amp.updatePairs(ampurl), amp.updateTokens(ampurl)]) )
+  .then( _ => amp.pairs.map(pair => delay(Math.random()*5000).then(_=>amp.subscribe(pair))) )
   .then( arr => Promise.all(arr) )
 //  .then( _ => Promise.all(amp.sign(wallet).cancelall()))
-  .then( _ => trader(wallet).makeall(amp.pairs.slice(0,20)))
+  .then( _ => config )
+  .then( ({whitelist}) => amp.pairs.filter(pair => whitelist==undefined || whitelist.includes(pair.baseTokenSymbol)) )
+  .then( pairs => trader(wallet).makeall(pairs.slice(0,20)))
   .catch(msg => console.log({err: msg}))
   .then(_=>process.exit())
 
