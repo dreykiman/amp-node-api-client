@@ -20,14 +20,11 @@ const makebook = ({bid,ask,minqty,spread}) => {
 
   let [bids,asks] = [bidStart, askStart].map( (start, ind) => {
     return [...Array(nOrders).keys()].map( iord => {
-      let ieff = iord + 0.1*Math.random()
-      if (iord>0) ieff += (Math.random()-0.3)
-      ieff /= nOrders
+      let qty = 1 + (iord*iord)/5
+      qty *= (1+Math.random()*0.3)*minqty/average
 
-      let qty = 1 + 3*ieff*ieff
-      qty *= minqty/average
-
-      let step = ieff * depth
+      let ieff = iord + 0.3*Math.random()
+      let step = ieff * depth/nOrders
       step = ind===0 ? -step : step
       let price = (1 + step)*start
 
