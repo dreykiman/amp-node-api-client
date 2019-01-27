@@ -25,7 +25,7 @@ export default ev => {
       if (type === 'INIT') {
         ords = pld.orders
         let pairName = pld.pairName
-        if (amp.subscriptions[pairName]) amp.subscriptions[pairName].resolve()
+        if (amp.subscriptions[pairName]) amp.subscriptions[pairName].resolve(pairName)
       }
       if (ords)
         handlers.resolve_from_book(ords)
